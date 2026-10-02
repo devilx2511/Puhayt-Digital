@@ -1,0 +1,235 @@
+{
+  "entities": {
+    "Lead": {
+      "title": "Lead",
+      "description": "Prospective client inquiries and project consultation requests",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "company": { "type": "string", "maxLength": 150 },
+        "service": { "type": "string", "maxLength": 100 },
+        "budget": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["New", "Contacted", "Closed"] },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["name", "email", "service", "status"]
+    },
+    "SEOAudit": {
+      "title": "SEOAudit",
+      "description": "Technical SEO and speed analysis reports generated for domains",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "url": { "type": "string", "maxLength": 500 },
+        "overallScore": { "type": "number" },
+        "seoScore": { "type": "number" },
+        "performanceScore": { "type": "number" },
+        "mobileScore": { "type": "number" },
+        "timestamp": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["url", "overallScore", "timestamp"]
+    },
+    "PricingPlan": {
+      "title": "PricingPlan",
+      "description": "Monthly and yearly agency subscription & growth tiers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "subtitle": { "type": "string", "maxLength": 250 },
+        "priceMonthly": { "type": "number" },
+        "priceYearly": { "type": "number" },
+        "popular": { "type": "boolean" },
+        "ctaText": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["name", "priceMonthly", "priceYearly"]
+    },
+    "PortfolioProject": {
+      "title": "PortfolioProject",
+      "description": "Agency featured client projects and case studies",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "image": { "type": "string", "maxLength": 500000 },
+        "liveUrl": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["title", "category"]
+    },
+    "AdCampaign": {
+      "title": "AdCampaign",
+      "description": "Marketing ad banners and promotional campaigns",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 100 },
+        "ctaText": { "type": "string", "maxLength": 100 },
+        "targetUrl": { "type": "string", "maxLength": 500 },
+        "imageUrl": { "type": "string", "maxLength": 500000 },
+        "status": { "type": "string", "maxLength": 50 },
+        "impressions": { "type": "number" },
+        "clicks": { "type": "number" }
+      },
+      "required": ["title", "category", "targetUrl"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Real-time agency activity and client interaction alerts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 150 },
+        "message": { "type": "string", "maxLength": 500 },
+        "type": { "type": "string", "maxLength": 50 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "read": { "type": "boolean" }
+      },
+      "required": ["title", "message", "type", "timestamp"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated client & admin user profiles with role and authentication provider metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phoneNumber": { "type": "string", "maxLength": 50 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "isAnonymous": { "type": "boolean" },
+        "role": { "type": "string", "enum": ["client", "vip", "admin", "guest"] },
+        "authProvider": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "lastLoginAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "role", "authProvider"]
+    },
+    "ClientWebsite": {
+      "title": "ClientWebsite",
+      "description": "Websites assigned from DevMode to subscribed and paid users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 150 },
+        "clientName": { "type": "string", "maxLength": 100 },
+        "websiteName": { "type": "string", "maxLength": 150 },
+        "liveUrl": { "type": "string", "maxLength": 500 },
+        "previewUrl": { "type": "string", "maxLength": 500 },
+        "adminPortalUrl": { "type": "string", "maxLength": 500 },
+        "planName": { "type": "string", "maxLength": 100 },
+        "subscriptionStatus": { "type": "string", "maxLength": 50 },
+        "deploymentStatus": { "type": "string", "maxLength": 50 },
+        "credentialsNote": { "type": "string", "maxLength": 2000 },
+        "deliveryDate": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["userEmail", "websiteName", "liveUrl", "subscriptionStatus"]
+    },
+    "ClientProject": {
+      "title": "ClientProject",
+      "description": "Client live project progress, phases, sprints, and upcoming milestones",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 150 },
+        "projectName": { "type": "string", "maxLength": 150 },
+        "progressPercent": { "type": "number" },
+        "currentPhase": { "type": "string", "maxLength": 100 },
+        "targetCompletionDate": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["projectName", "progressPercent", "currentPhase"]
+    },
+    "ClientChatMessage": {
+      "title": "ClientChatMessage",
+      "description": "Messages exchanged between authenticated clients and DevMode engineers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "senderEmail": { "type": "string", "maxLength": 150 },
+        "recipientEmail": { "type": "string", "maxLength": 150 },
+        "isFromDevMode": { "type": "boolean" },
+        "message": { "type": "string", "maxLength": 5000 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "read": { "type": "boolean" }
+      },
+      "required": ["senderEmail", "message", "timestamp", "isFromDevMode"]
+    },
+    "ClientInvoice": {
+      "title": "ClientInvoice",
+      "description": "Client billing invoices and payment verification records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "invoiceNo": { "type": "string", "maxLength": 50 },
+        "userEmail": { "type": "string", "maxLength": 150 },
+        "clientName": { "type": "string", "maxLength": 100 },
+        "planName": { "type": "string", "maxLength": 100 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "date": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "maxLength": 50 },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "transactionRef": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["invoiceNo", "userEmail", "amount", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account profile document"
+    },
+    "/client_websites/{websiteId}": {
+      "schema": "ClientWebsite",
+      "description": "Client website deliverables managed from DevMode"
+    },
+    "/client_projects/{projectId}": {
+      "schema": "ClientProject",
+      "description": "Client project progress and sprint milestones"
+    },
+    "/client_chats/{messageId}": {
+      "schema": "ClientChatMessage",
+      "description": "Direct communication between clients and DevMode"
+    },
+    "/client_invoices/{invoiceId}": {
+      "schema": "ClientInvoice",
+      "description": "Client invoice history and receipts"
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Inbound client consultation and contact submissions"
+    },
+    "/seo_audits/{auditId}": {
+      "schema": "SEOAudit",
+      "description": "Instant SEO audits and technical performance reports"
+    },
+    "/pricing_plans/{planId}": {
+      "schema": "PricingPlan",
+      "description": "Dynamic pricing tiers configured via Admin DevMode"
+    },
+    "/portfolio_projects/{projectId}": {
+      "schema": "PortfolioProject",
+      "description": "Showcase portfolio entries and client work"
+    },
+    "/campaigns/{campaignId}": {
+      "schema": "AdCampaign",
+      "description": "Marketing ad banner campaigns"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Agency operational alerts and inquiries"
+    }
+  }
+}

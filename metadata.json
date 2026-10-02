@@ -1,0 +1,6 @@
+{
+  "name": "Puhayt Digital",
+  "description": "Ultra-Luxury Digital Agency & Client Portal featuring bespoke opening experience, cinematic loading, live project timeline, and interactive portfolio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Leads / Consultation Inquiries
+    match /leads/{leadId} {
+      allow read, write: if true;
+    }
+
+    // SEO audits collection
+    match /seo_audits/{auditId} {
+      allow read, write: if true;
+    }
+
+    // Pricing plans collection
+    match /pricing_plans/{planId} {
+      allow read, write: if true;
+    }
+
+    // Portfolio projects collection
+    match /portfolio_projects/{projectId} {
+      allow read, write: if true;
+    }
+
+    // Marketing campaigns collection
+    match /campaigns/{campaignId} {
+      allow read, write: if true;
+    }
+
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read, write: if true;
+    }
+
+    // Settings collection
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+
+    // User accounts collection
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Client Assigned Websites (sent from DevMode to paid & subscribed users)
+    match /client_websites/{websiteId} {
+      allow read, write: if true;
+    }
+
+    // Client Projects & Sprints
+    match /client_projects/{projectId} {
+      allow read, write: if true;
+    }
+
+    // Direct Chat between DevMode and Clients
+    match /client_chats/{messageId} {
+      allow read, write: if true;
+    }
+
+    // Client Invoices & Receipts
+    match /client_invoices/{invoiceId} {
+      allow read, write: if true;
+    }
+
+    // Website Analyses
+    match /website_analyses/{analysisId} {
+      allow read, write: if true;
+    }
+
+    // System Metadata
+    match /system_metadata/{metaId} {
+      allow read, write: if true;
+    }
+
+    // Test doc
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

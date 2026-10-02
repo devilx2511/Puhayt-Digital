@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Generative Engine Optimization (GEO) & Search Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Disallow private and administrative endpoints
+Disallow: /api/
+Disallow: /dev-mode
+
+# Sitemap reference
+Sitemap: https://puhayt-digital.ai.studio/sitemap.xml
+
