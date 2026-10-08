@@ -1,137 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <!-- Homepage English (Default) -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://puhaytdigital.ai.studio/</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://puhayt-digital.ai.studio/" />
-    <xhtml:link rel="alternate" hreflang="hi" href="https://puhayt-digital.ai.studio/hi" />
-    <xhtml:link rel="alternate" hreflang="bn" href="https://puhayt-digital.ai.studio/bn" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://puhayt-digital.ai.studio/" />
   </url>
 
-  <!-- Best Digital Marketing in Kolkata Hub -->
+  <!-- About -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/#kolkata-geo</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://puhayt-digital.ai.studio/#kolkata-geo" />
-    <xhtml:link rel="alternate" hreflang="bn" href="https://puhayt-digital.ai.studio/bn" />
+    <loc>https://puhaytdigital.ai.studio/about</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
-  <!-- Homepage Hindi -->
+  <!-- Services -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/hi</loc>
-    <lastmod>2026-09-29</lastmod>
+    <loc>https://puhaytdigital.ai.studio/services</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://puhayt-digital.ai.studio/" />
-    <xhtml:link rel="alternate" hreflang="hi" href="https://puhayt-digital.ai.studio/hi" />
-    <xhtml:link rel="alternate" hreflang="bn" href="https://puhayt-digital.ai.studio/bn" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://puhayt-digital.ai.studio/" />
-  </url>
-
-  <!-- Homepage Bengali -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/bn</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://puhayt-digital.ai.studio/" />
-    <xhtml:link rel="alternate" hreflang="hi" href="https://puhayt-digital.ai.studio/hi" />
-    <xhtml:link rel="alternate" hreflang="bn" href="https://puhayt-digital.ai.studio/bn" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://puhayt-digital.ai.studio/" />
-  </url>
-
-  <!-- Services Hub -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-  <!-- Individual Service: Web Development -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services/web-development</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Individual Service: SEO -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services/seo</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Individual Service: Google Ads -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services/google-ads</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Individual Service: Social Media Marketing -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services/social-media-marketing</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- Individual Service: AI Solutions -->
-  <url>
-    <loc>https://puhayt-digital.ai.studio/services/ai-solutions</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 
   <!-- Portfolio -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/portfolio</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <loc>https://puhaytdigital.ai.studio/portfolio</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <!-- About Us -->
+  <!-- Kolkata Local SEO & GEO Hub -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/about</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://puhaytdigital.ai.studio/kolkata-geo</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <!-- Contact -->
+  <!-- SEO & GEO Audit Tool + AI Suite -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/contact</loc>
-    <lastmod>2026-09-16</lastmod>
+    <loc>https://puhaytdigital.ai.studio/ai-suite</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Industries We Serve -->
+  <url>
+    <loc>https://puhaytdigital.ai.studio/industries</loc>
+    <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Privacy Policy -->
+  <!-- Client Reviews & Testimonials -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/privacy-policy</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://puhaytdigital.ai.studio/testimonials</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
-  <!-- Terms of Service -->
+  <!-- Blog -->
   <url>
-    <loc>https://puhayt-digital.ai.studio/terms</loc>
-    <lastmod>2026-09-16</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://puhaytdigital.ai.studio/blog</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
+
+  <!-- Off-Page SEO & Citations Hub -->
+  <url>
+    <loc>https://puhaytdigital.ai.studio/off-page-seo</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Packages, Discounts & Referrals -->
+  <url>
+    <loc>https://puhaytdigital.ai.studio/referrals</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://puhaytdigital.ai.studio/contact</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

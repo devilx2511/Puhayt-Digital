@@ -1,0 +1,118 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
+      "@id": "https://puhaytdigital.ai.studio/#organization",
+      "name": "Puhayt Digital",
+      "legalName": "Puhayt Digital Technologies",
+      "url": "https://puhaytdigital.ai.studio/",
+      "logo": "https://puhaytdigital.ai.studio/favicon.svg",
+      "image": "https://puhaytdigital.ai.studio/hero.svg",
+      "description": "Puhayt Digital is a full-stack digital marketing, custom website building, 3D WebGL web design, domain & cloud hosting, and technical SEO + Generative Engine Optimization (GEO) agency based in Kolkata, West Bengal, India.",
+      "telephone": "+91 7044811476",
+      "email": "contact@puhayt.digital",
+      "priceRange": "₹10,000 - ₹50,000+",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Salt Lake Sector V, Bidhannagar",
+        "addressLocality": "Kolkata",
+        "addressRegion": "West Bengal",
+        "postalCode": "700091",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 22.5804,
+        "longitude": 88.4378
+      },
+      "founders": [
+        {
+          "@type": "Person",
+          "@id": "https://puhaytdigital.ai.studio/#trishanjit-dalal",
+          "name": "Trishanjit Dalal",
+          "jobTitle": "Founder — Ads Runner & Performance Marketing Lead",
+          "telephone": "+91 7044811476",
+          "sameAs": [
+            "https://www.instagram.com/itz___.unknown_13/"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": "https://puhaytdigital.ai.studio/#aayush-ghosh",
+          "name": "Aayush Ghosh",
+          "jobTitle": "Co-Founder — Full-Stack Website Developer, Domain/Hosting Architect & Technical SEO Expert",
+          "telephone": "+91 8583878622",
+          "email": "aayushcps0907@gmail.com",
+          "sameAs": [
+            "https://www.instagram.com/aayushg.dev/"
+          ]
+        }
+      ],
+      "knowsAbout": [
+        "Search Engine Optimization (SEO)",
+        "Generative Engine Optimization (GEO)",
+        "Custom Website Building (React 19, TypeScript, SSR)",
+        "3D WebGL & Responsive UI/UX Web Design",
+        "Domain Registration & Authoritative DNS Configuration",
+        "Cloud Edge Hosting, SSL/TLS Security & Firebase Authentication",
+        "Technical SEO & GEO Audits",
+        "Google Search Ads & Meta Performance Digital Marketing"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Puhayt Digital 6 Core Service Pillars",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best SEO Services: Technical, On-Page, Off-Page & Local SEO",
+              "url": "https://puhaytdigital.ai.studio/services"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best Website Building: Full-Stack React & Custom Web Development",
+              "url": "https://puhaytdigital.ai.studio/portfolio"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best Web Design: Mobile-First UI/UX & 3D WebGL Experiences",
+              "url": "https://puhaytdigital.ai.studio/services"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best Domain and Hosting: DNS, Cloud Edge CDN, SSL & Firebase Auth",
+              "url": "https://puhaytdigital.ai.studio/contact"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best SEO and GEO Audit: Core Web Vitals, Schema & AI Citation Readiness",
+              "url": "https://puhaytdigital.ai.studio/ai-suite"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Best Digital Marketing: High-ROAS Google Search & Meta Ad Funnels",
+              "url": "https://puhaytdigital.ai.studio/referrals"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

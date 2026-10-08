@@ -18,6 +18,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         return <TrendingUp className="w-5 h-5" />;
       case "Palette":
         return <Palette className="w-5 h-5" />;
+      case "Shield":
+        return <Shield className="w-5 h-5" />;
       case "Bot":
         return <Bot className="w-5 h-5" />;
       default:

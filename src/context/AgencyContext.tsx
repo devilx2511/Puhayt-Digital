@@ -12,14 +12,83 @@ import {
   ClientMilestone,
   ClientChatMessage,
   ClientInvoice,
+  TeamMemberProfile,
+  DiscountOffer,
+  UserReferralStats,
+  EarnedDiscount,
+  ReferralClickRecord,
+  PublicReview,
+  BlogPost,
 } from "../types";
-import { PRICING_PLANS, PORTFOLIO_PROJECTS } from "../data/agencyData";
+import { PRICING_PLANS, PORTFOLIO_PROJECTS, DEFAULT_TEAM_MEMBERS, DEFAULT_DISCOUNTS, DEFAULT_USER_REFERRAL_STATS, BLOG_POSTS } from "../data/agencyData";
 import { ALL_INDIAN_BANKS, ALL_UPI_APPS } from "../data/indianBanksAndUpi";
 import { validateIndianMobile, validateUpiVpa } from "../utils/paymentValidation";
-import { db, handleFirestoreError, OperationType, cleanFirestoreData } from "../lib/firebase";
-import { collection, doc, setDoc, deleteDoc, onSnapshot, getDoc, getDocs } from "firebase/firestore";
-import { User } from "firebase/auth";
-import { subscribeToAuth, logoutUser } from "../lib/firebaseAuth";
+import type { User } from "firebase/auth";
+
+function cleanFirestoreData<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((item) => cleanFirestoreData(item)) as unknown as T;
+  }
+  if (typeof obj === "object") {
+    const cleaned: Record<string, any> = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v !== undefined) {
+        cleaned[k] = cleanFirestoreData(v);
+      }
+    }
+    return cleaned as T;
+  }
+  return obj;
+}
+
+let firebaseDepsPromise: Promise<{
+  db: any;
+  handleFirestoreError: any;
+  OperationType: any;
+  collection: any;
+  doc: any;
+  setDoc: any;
+  deleteDoc: any;
+  onSnapshot: any;
+}> | null = null;
+
+function getFirebaseDeps() {
+  if (!firebaseDepsPromise) {
+    firebaseDepsPromise = Promise.all([
+      import("../lib/firebase"),
+      import("firebase/firestore"),
+    ]).then(([fbLib, firestore]) => ({
+      db: fbLib.db,
+      handleFirestoreError: fbLib.handleFirestoreError,
+      OperationType: fbLib.OperationType,
+      collection: firestore.collection,
+      doc: firestore.doc,
+      setDoc: firestore.setDoc,
+      deleteDoc: firestore.deleteDoc,
+      onSnapshot: firestore.onSnapshot,
+    }));
+  }
+  return firebaseDepsPromise;
+}
+
+async function asyncSetDoc(colName: string, docId: string, data: any, options?: any) {
+  try {
+    const { db, doc, setDoc } = await getFirebaseDeps();
+    await setDoc(doc(db, colName, docId), cleanFirestoreData(data), options);
+  } catch (err) {
+    console.error(`Firestore write error (${colName}/${docId}):`, err);
+  }
+}
+
+async function asyncDeleteDoc(colName: string, docId: string) {
+  try {
+    const { db, doc, deleteDoc } = await getFirebaseDeps();
+    await deleteDoc(doc(db, colName, docId));
+  } catch (err) {
+    console.error(`Firestore delete error (${colName}/${docId}):`, err);
+  }
+}
 
 export interface ContactInfo {
   emails: string[];
@@ -220,21 +289,54 @@ interface AgencyContextType {
   sendClientChatMessage: (msg: Omit<ClientChatMessage, "id" | "timestamp" | "read">) => Promise<void>;
   addOrUpdateClientProject: (project: ClientProject) => Promise<void>;
   addClientInvoice: (invoice: ClientInvoice) => Promise<void>;
+
+  // Team & Leadership Profiles
+  teamMembers: TeamMemberProfile[];
+  updateTeamMember: (id: string, updates: Partial<TeamMemberProfile>) => Promise<void>;
+
+  // Referrals & Discounts
+  discounts: DiscountOffer[];
+  addDiscount: (discount: Omit<DiscountOffer, "id" | "createdAt">) => Promise<void>;
+  updateDiscount: (id: string, updates: Partial<DiscountOffer>) => Promise<void>;
+  deleteDiscount: (id: string) => Promise<void>;
+
+  // Blog & Articles
+  blogPosts: BlogPost[];
+  addBlogPost: (post: Omit<BlogPost, "id">) => Promise<void>;
+  updateBlogPost: (id: string, updates: Partial<BlogPost>) => Promise<void>;
+  deleteBlogPost: (id: string) => Promise<void>;
+  restoreDefaultBlogPosts: () => Promise<void>;
+
+  // Referral Link Tracking & Earned Discounts Dashboard
+  referralStats: UserReferralStats;
+  userReferralCode: string;
+  trackReferralClick: (code?: string, customMeta?: Partial<ReferralClickRecord>) => void;
+  simulateReferralClick: () => void;
+  redeemEarnedDiscount: (discountId: string, invoiceRef?: string) => Promise<boolean>;
+  resetReferralStats: () => void;
+  updateReferralCode: (newCode: string) => void;
+
+  // Real Public Reviews System (Google Maps & Google Play Store style)
+  publicReviews: PublicReview[];
+  addPublicReview: (review: Omit<PublicReview, "id" | "createdAt" | "helpfulCount">) => Promise<void>;
+  markReviewHelpful: (reviewId: string) => Promise<void>;
+  replyToPublicReview: (reviewId: string, replyText: string, repliedBy?: string) => Promise<void>;
+  deletePublicReview: (reviewId: string) => Promise<void>;
 }
 
 const DEFAULT_CONTACTS: ContactInfo = {
   emails: ["aayushcps0907@gmail.com", "contact@puhayt.digital"],
   whatsapps: ["+91 7044811476"],
-  instagrams: ["@puhayt.digital", "@puhayt_agency"],
-  phones: ["+91 7044811476"],
-  address: "Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India",
+  instagrams: ["@itz___.unknown_13", "@aayushg.dev"],
+  phones: ["+91 70448 11476"],
+  address: "Kolkata, West Bengal (We operate digitally & travel directly to your office / business premises across Kolkata)",
 };
 
 const DEFAULT_LOCATION: LocationPin = {
   lat: 22.5804,
   lng: 88.4378,
-  address: "Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091",
-  mapTitle: "Puhayt Digital — Best Digital Marketing Agency in Kolkata",
+  address: "Kolkata, West Bengal — In-Person Briefings at Your Premises across Kolkata",
+  mapTitle: "Puhayt Digital — We Meet Directly at Your Office / Premises",
 };
 
 const DEFAULT_PAYMENT_SETTINGS: PaymentSettings = {
@@ -470,12 +572,23 @@ export const DEFAULT_CHAT_MESSAGES: ClientChatMessage[] = [
   },
 ];
 
+function safeGetLocalStorage(key: string): string | null {
+  if (typeof window === "undefined" || typeof window.localStorage === "undefined") {
+    return null;
+  }
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
 const AgencyContext = createContext<AgencyContextType | undefined>(undefined);
 
 export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Brand Logo Config
   const [brandLogo, setBrandLogoState] = useState<BrandLogoConfig>(() => {
-    const saved = localStorage.getItem("puhayt_brand_logo");
+    const saved = safeGetLocalStorage("puhayt_brand_logo");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -488,7 +601,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
   // Pricing plans
   const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>(() => {
-    const saved = localStorage.getItem("puhayt_pricing_plans");
+    const saved = safeGetLocalStorage("puhayt_pricing_plans");
     if (saved !== null) {
       try {
         const parsed = JSON.parse(saved);
@@ -504,7 +617,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Portfolio projects
   const [portfolioProjects, setPortfolioProjects] = useState<PortfolioProject[]>(() => {
-    const saved = localStorage.getItem("puhayt_portfolio_projects");
+    const saved = safeGetLocalStorage("puhayt_portfolio_projects");
     if (saved !== null) {
       try {
         const parsed = JSON.parse(saved);
@@ -520,74 +633,144 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Case studies visibility
   const [showCaseStudies, setShowCaseStudiesState] = useState<boolean>(() => {
-    const saved = localStorage.getItem("puhayt_show_case_studies");
+    const saved = safeGetLocalStorage("puhayt_show_case_studies");
     return saved ? JSON.parse(saved) : false;
   });
 
   // Contact info
   const [contactInfo, setContactInfo] = useState<ContactInfo>(() => {
-    const saved = localStorage.getItem("puhayt_contact_info");
+    const saved = safeGetLocalStorage("puhayt_contact_info");
     return saved ? JSON.parse(saved) : DEFAULT_CONTACTS;
   });
 
   // Location pin
   const [locationPin, setLocationPin] = useState<LocationPin>(() => {
-    const saved = localStorage.getItem("puhayt_location_pin");
+    const saved = safeGetLocalStorage("puhayt_location_pin");
     return saved ? JSON.parse(saved) : DEFAULT_LOCATION;
+  });
+
+  // Team & Leadership Profiles
+  const [teamMembers, setTeamMembers] = useState<TeamMemberProfile[]>(() => {
+    const saved = safeGetLocalStorage("puhayt_team_members");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {}
+    }
+    return DEFAULT_TEAM_MEMBERS;
+  });
+
+  // Referrals & Promotional Discount Offers (filter out legacy demo IDs)
+  const DEMO_DISCOUNT_IDS = ["disc-welcome-20", "disc-startup-bundle", "disc-referral-vip"];
+  const [discounts, setDiscounts] = useState<DiscountOffer[]>(() => {
+    const saved = safeGetLocalStorage("puhayt_discounts");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter((d: DiscountOffer) => !DEMO_DISCOUNT_IDS.includes(d.id));
+          if (cleaned.length > 0) return cleaned;
+        }
+      } catch (e) {}
+    }
+    return DEFAULT_DISCOUNTS;
+  });
+
+  // Blog & Articles
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(() => {
+    const saved = safeGetLocalStorage("puhayt_blog_posts");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    return BLOG_POSTS;
+  });
+
+  // REAL PUBLIC REVIEWS (100% Real User-Submitted Only)
+  const [publicReviews, setPublicReviews] = useState<PublicReview[]>(() => {
+    const saved = safeGetLocalStorage("puhayt_public_reviews");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+    }
+    return [];
+  });
+
+  // USER REFERRAL LINK TRACKING & EARNED DISCOUNTS STATS
+  const [referralStats, setReferralStats] = useState<UserReferralStats>(() => {
+    const saved = safeGetLocalStorage("puhayt_user_referral_stats");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.totalClicks === "number") return parsed;
+      } catch (e) {}
+    }
+    return DEFAULT_USER_REFERRAL_STATS;
+  });
+
+  const [userReferralCode, setUserReferralCode] = useState<string>(() => {
+    return safeGetLocalStorage("puhayt_user_referral_code") || DEFAULT_USER_REFERRAL_STATS.referralCode;
   });
 
   // REAL TRANSACTIONS
   const [transactions, setTransactions] = useState<TransactionRecord[]>(() => {
-    const saved = localStorage.getItem("puhayt_transactions");
+    const saved = safeGetLocalStorage("puhayt_transactions");
     return saved ? JSON.parse(saved) : [];
   });
 
   // REAL LEADS
   const [leads, setLeads] = useState<LeadRecord[]>(() => {
-    const saved = localStorage.getItem("puhayt_leads");
+    const saved = safeGetLocalStorage("puhayt_leads");
     return saved ? JSON.parse(saved) : [];
   });
 
   // NOTIFICATIONS
   const [notifications, setNotifications] = useState<NotificationRecord[]>(() => {
-    const saved = localStorage.getItem("puhayt_notifications");
+    const saved = safeGetLocalStorage("puhayt_notifications");
     return saved ? JSON.parse(saved) : [];
   });
 
   // PAYMENT AUDIT LOGS
   const [paymentAuditLogs, setPaymentAuditLogs] = useState<PaymentAuditLog[]>(() => {
-    const saved = localStorage.getItem("puhayt_payment_audit_logs");
+    const saved = safeGetLocalStorage("puhayt_payment_audit_logs");
     return saved ? JSON.parse(saved) : [];
   });
 
   // PAYMENT SETTINGS
   const [paymentSettings, setPaymentSettings] = useState<PaymentSettings>(() => {
-    const saved = localStorage.getItem("puhayt_payment_settings");
+    const saved = safeGetLocalStorage("puhayt_payment_settings");
     return saved ? JSON.parse(saved) : DEFAULT_PAYMENT_SETTINGS;
   });
 
   // CAMPAIGNS STATE
   const [campaigns, setCampaigns] = useState<AdCampaign[]>(() => {
-    const saved = localStorage.getItem("puhayt_ad_campaigns");
+    const saved = safeGetLocalStorage("puhayt_ad_campaigns");
     return saved ? JSON.parse(saved) : INITIAL_CAMPAIGNS;
   });
 
   // WEBSITE ANALYSES STATE
   const [websiteAnalyses, setWebsiteAnalyses] = useState<WebsiteAnalysis[]>(() => {
-    const saved = localStorage.getItem("puhayt_website_analyses");
+    const saved = safeGetLocalStorage("puhayt_website_analyses");
     return saved ? JSON.parse(saved) : [];
   });
 
   // SEO AUDIT HISTORY
   const [seoAuditHistory, setSeoAuditHistory] = useState<SEOAuditResult[]>(() => {
-    const saved = localStorage.getItem("puhayt_seo_audit_history");
+    const saved = safeGetLocalStorage("puhayt_seo_audit_history");
     return saved ? JSON.parse(saved) : [];
   });
 
   // DEV MODE STATE
   const [isDevModeOpen, setIsDevModeOpen] = useState(false);
   const [isDevModeAuthenticated, setIsDevModeAuthenticated] = useState(() => {
-    return localStorage.getItem("puhayt_devmode_authed") === "true";
+    return safeGetLocalStorage("puhayt_devmode_authed") === "true";
   });
 
   // FIREBASE AUTH STATE
@@ -596,15 +779,58 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"google" | "email" | "phone" | "guest">("google");
 
+  // Firestore & Auth Real-Time Listeners — Activated on first user interaction or modal open
+  const [firestoreReady, setFirestoreReady] = useState(false);
+
+  // PAYMENT MODAL STATE
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<PricingPlan | null>(null);
+
+  // CLIENT DASHBOARD STATE (Secure Authenticated Portal)
+  const [isClientDashboardOpen, setIsClientDashboardOpen] = useState(false);
+  const openClientDashboard = () => {
+    setFirestoreReady(true);
+    setIsClientDashboardOpen(true);
+  };
+  const closeClientDashboard = () => setIsClientDashboardOpen(false);
+
   useEffect(() => {
-    const unsub = subscribeToAuth((user, profile) => {
-      setCurrentUser(user);
-      setUserProfile(profile);
-    });
-    return () => unsub();
+    let activated = false;
+    const activate = () => {
+      if (activated) return;
+      activated = true;
+      setFirestoreReady(true);
+    };
+
+    const events = ["pointerdown", "keydown", "touchstart"] as const;
+    events.forEach((evt) => window.addEventListener(evt, activate, { once: true, passive: true }));
+
+    return () => {
+      events.forEach((evt) => window.removeEventListener(evt, activate));
+    };
   }, []);
 
+  useEffect(() => {
+    if (!firestoreReady && !isAuthModalOpen && !isClientDashboardOpen && !isDevModeOpen) return;
+    let unsub = () => {};
+    let cancelled = false;
+    import("../lib/firebaseAuth")
+      .then(({ subscribeToAuth }) => {
+        if (cancelled) return;
+        unsub = subscribeToAuth((user, profile) => {
+          setCurrentUser(user);
+          setUserProfile(profile);
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+      unsub();
+    };
+  }, [firestoreReady, isAuthModalOpen, isClientDashboardOpen, isDevModeOpen]);
+
   const openAuthModal = (tab: "google" | "email" | "phone" | "guest" = "google") => {
+    setFirestoreReady(true);
     setAuthModalTab(tab);
     setIsAuthModalOpen(true);
   };
@@ -614,106 +840,149 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const logout = async () => {
+    const { logoutUser } = await import("../lib/firebaseAuth");
     await logoutUser();
   };
 
-  // PAYMENT MODAL STATE
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [selectedPlanForPayment, setSelectedPlanForPayment] = useState<PricingPlan | null>(null);
-
-  // CLIENT DASHBOARD STATE (Secure Authenticated Portal)
-  const [isClientDashboardOpen, setIsClientDashboardOpen] = useState(false);
-  const openClientDashboard = () => setIsClientDashboardOpen(true);
-  const closeClientDashboard = () => setIsClientDashboardOpen(false);
-
   const [clientWebsites, setClientWebsites] = useState<ClientWebsite[]>(() => {
-    const saved = localStorage.getItem("puhayt_client_websites");
+    const saved = safeGetLocalStorage("puhayt_client_websites");
     return saved ? JSON.parse(saved) : DEFAULT_CLIENT_WEBSITES;
   });
 
   const [clientProjects, setClientProjects] = useState<ClientProject[]>(() => {
-    const saved = localStorage.getItem("puhayt_client_projects");
+    const saved = safeGetLocalStorage("puhayt_client_projects");
     return saved ? JSON.parse(saved) : [DEFAULT_CLIENT_PROJECT];
   });
 
   const [clientChatMessages, setClientChatMessages] = useState<ClientChatMessage[]>(() => {
-    const saved = localStorage.getItem("puhayt_client_chats");
+    const saved = safeGetLocalStorage("puhayt_client_chats");
     return saved ? JSON.parse(saved) : DEFAULT_CHAT_MESSAGES;
   });
 
   const [clientInvoices, setClientInvoices] = useState<ClientInvoice[]>(() => {
-    const saved = localStorage.getItem("puhayt_client_invoices");
+    const saved = safeGetLocalStorage("puhayt_client_invoices");
     return saved ? JSON.parse(saved) : DEFAULT_CLIENT_INVOICES;
   });
 
+  const hasMountedStorageRef = React.useRef(false);
+
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_client_websites", JSON.stringify(clientWebsites));
   }, [clientWebsites]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_client_projects", JSON.stringify(clientProjects));
   }, [clientProjects]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_client_chats", JSON.stringify(clientChatMessages));
   }, [clientChatMessages]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_client_invoices", JSON.stringify(clientInvoices));
   }, [clientInvoices]);
 
   // Sync state to local storage
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_pricing_plans", JSON.stringify(pricingPlans));
   }, [pricingPlans]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(portfolioProjects));
   }, [portfolioProjects]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_show_case_studies", JSON.stringify(showCaseStudies));
   }, [showCaseStudies]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_contact_info", JSON.stringify(contactInfo));
   }, [contactInfo]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_location_pin", JSON.stringify(locationPin));
   }, [locationPin]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_transactions", JSON.stringify(transactions));
   }, [transactions]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_leads", JSON.stringify(leads));
   }, [leads]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_notifications", JSON.stringify(notifications));
   }, [notifications]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_payment_audit_logs", JSON.stringify(paymentAuditLogs));
   }, [paymentAuditLogs]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_payment_settings", JSON.stringify(paymentSettings));
   }, [paymentSettings]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_ad_campaigns", JSON.stringify(campaigns));
   }, [campaigns]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_website_analyses", JSON.stringify(websiteAnalyses));
   }, [websiteAnalyses]);
 
   useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
     localStorage.setItem("puhayt_seo_audit_history", JSON.stringify(seoAuditHistory));
   }, [seoAuditHistory]);
+
+  useEffect(() => {
+    if (!hasMountedStorageRef.current) return;
+    localStorage.setItem("puhayt_user_referral_stats", JSON.stringify(referralStats));
+  }, [referralStats]);
+
+  useEffect(() => {
+    if (!hasMountedStorageRef.current) {
+      hasMountedStorageRef.current = true;
+      return;
+    }
+    localStorage.setItem("puhayt_user_referral_code", userReferralCode);
+  }, [userReferralCode]);
+
+  // Check URL query parameters for ?ref=<code> on page entry
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get("ref");
+      if (ref) {
+        const sessionKey = `puhayt_tracked_ref_${ref}`;
+        if (!sessionStorage.getItem(sessionKey)) {
+          sessionStorage.setItem(sessionKey, "1");
+          trackReferralClick(ref, {
+            source: document.referrer && document.referrer.includes("whatsapp") ? "WhatsApp" : "Direct Link",
+            device: /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+            location: "Kolkata, WB",
+          });
+        }
+      }
+    }
+  }, []);
 
   // Cloud Syncing indicator state
   const [isCloudSyncing, setIsCloudSyncing] = useState(false);
@@ -724,24 +993,25 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       // 1. Sync Portfolio Projects
       for (const p of portfolioProjects) {
-        await setDoc(doc(db, "portfolio_projects", p.id), cleanFirestoreData(p));
+        await asyncSetDoc("portfolio_projects", p.id, p);
       }
 
       // 2. Sync Pricing Plans
       for (const plan of pricingPlans) {
-        await setDoc(doc(db, "pricing_plans", plan.id), cleanFirestoreData(plan));
+        await asyncSetDoc("pricing_plans", plan.id, plan);
       }
 
       // 3. Sync Settings
-      await setDoc(doc(db, "settings", "contact_info"), cleanFirestoreData(contactInfo));
-      await setDoc(doc(db, "settings", "location_pin"), cleanFirestoreData(locationPin));
-      await setDoc(doc(db, "settings", "payment_settings"), cleanFirestoreData(paymentSettings));
-      await setDoc(doc(db, "settings", "brand_logo"), cleanFirestoreData(brandLogo));
-      await setDoc(doc(db, "settings", "site_config"), cleanFirestoreData({ showCaseStudies }));
+      await asyncSetDoc("settings", "contact_info", contactInfo);
+      await asyncSetDoc("settings", "location_pin", locationPin);
+      await asyncSetDoc("settings", "payment_settings", paymentSettings);
+      await asyncSetDoc("settings", "brand_logo", brandLogo);
+      await asyncSetDoc("settings", "site_config", { showCaseStudies });
+      await asyncSetDoc("settings", "blog_posts", { list: blogPosts });
 
       // 4. Sync Campaigns
       for (const c of campaigns) {
-        await setDoc(doc(db, "campaigns", c.id), cleanFirestoreData(c));
+        await asyncSetDoc("campaigns", c.id, c);
       }
 
       const syncNotif: NotificationRecord = {
@@ -753,7 +1023,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         read: false,
       };
       setNotifications((prev) => [syncNotif, ...prev]);
-      await setDoc(doc(db, "notifications", syncNotif.id), cleanFirestoreData(syncNotif));
+      await asyncSetDoc("notifications", syncNotif.id, syncNotif);
 
       setIsCloudSyncing(false);
       return true;
@@ -764,378 +1034,648 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
-  // Firestore Real-Time Listeners
+  // Public Firestore Listeners (Settings, Portfolio, Pricing, Discounts, Public Reviews)
   useEffect(() => {
-    // 1. Leads Listener
-    let unsubLeads = () => {};
-    try {
-      unsubLeads = onSnapshot(
-        collection(db, "leads"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const fetchedLeads = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as LeadRecord));
-            setLeads(fetchedLeads);
-          }
-        },
-        (error) => {
-          console.warn("Firestore leads sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore leads sync initialized", e);
-    }
+    if (!firestoreReady) return;
 
-    // 2. Notifications Listener
-    let unsubNotifs = () => {};
-    try {
-      unsubNotifs = onSnapshot(
-        collection(db, "notifications"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const fetched = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as NotificationRecord));
-            setNotifications(fetched);
-          }
-        },
-        (error) => {
-          console.warn("Firestore notifs sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore notifs sync initialized", e);
-    }
+    let cancelled = false;
+    const unsubs: Array<() => void> = [];
 
-    // One-time initial seeding for brand new Firestore database setup (runs once only)
-    const initializeDatabaseOnce = async () => {
-      try {
-        const metaDocRef = doc(db, "system_metadata", "init_status");
-        const metaSnap = await getDoc(metaDocRef);
-        if (!metaSnap.exists()) {
-          // Record initialization flag immediately so it never triggers again
-          await setDoc(metaDocRef, { initialized: true, timestamp: Date.now() });
+    getFirebaseDeps()
+      .then(({ db, collection, doc, onSnapshot }) => {
+        if (cancelled) return;
 
-          // Seed default pricing plans only if collection is empty
-          const pricingSnap = await getDocs(collection(db, "pricing_plans"));
-          if (pricingSnap.empty) {
-            for (const p of PRICING_PLANS) {
-              await setDoc(doc(db, "pricing_plans", p.id), cleanFirestoreData(p)).catch(() => {});
-            }
-          }
+        try {
+          unsubs.push(
+            onSnapshot(
+              collection(db, "pricing_plans"),
+              (snapshot: any) => {
+                if (!snapshot.empty) {
+                  const plans = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as PricingPlan));
+                  setPricingPlans(plans);
+                  localStorage.setItem("puhayt_pricing_plans", JSON.stringify(plans));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-          // Seed default portfolio projects only if collection is empty
-          const portSnap = await getDocs(collection(db, "portfolio_projects"));
-          if (portSnap.empty) {
-            for (const p of PORTFOLIO_PROJECTS) {
-              await setDoc(doc(db, "portfolio_projects", p.id), cleanFirestoreData(p)).catch(() => {});
-            }
-          }
+        try {
+          unsubs.push(
+            onSnapshot(
+              collection(db, "portfolio_projects"),
+              (snapshot: any) => {
+                if (!snapshot.empty) {
+                  const projects = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as PortfolioProject));
+                  setPortfolioProjects(projects);
+                  localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(projects));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-          // Seed default campaigns only if collection is empty
-          const campSnap = await getDocs(collection(db, "campaigns"));
-          if (campSnap.empty) {
-            for (const c of INITIAL_CAMPAIGNS) {
-              await setDoc(doc(db, "campaigns", c.id), cleanFirestoreData(c)).catch(() => {});
-            }
-          }
-        }
-      } catch (err) {
-        console.warn("One-time seed check note:", err);
-      }
-    };
-    initializeDatabaseOnce();
+        try {
+          unsubs.push(
+            onSnapshot(
+              collection(db, "campaigns"),
+              (snapshot: any) => {
+                if (!snapshot.empty) {
+                  const camps = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as AdCampaign));
+                  setCampaigns(camps);
+                  localStorage.setItem("puhayt_ad_campaigns", JSON.stringify(camps));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 3. Pricing Plans Listener (Real-Time Live Sync)
-    let unsubPricing = () => {};
-    try {
-      unsubPricing = onSnapshot(
-        collection(db, "pricing_plans"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const plans = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as PricingPlan));
-            setPricingPlans(plans);
-            localStorage.setItem("puhayt_pricing_plans", JSON.stringify(plans));
-          } else {
-            // Seed Firestore with default plans so collection is created and permanently stored in Cloud
-            for (const p of PRICING_PLANS) {
-              setDoc(doc(db, "pricing_plans", p.id), cleanFirestoreData(p)).catch(() => {});
-            }
-          }
-        },
-        (error) => {
-          console.warn("Firestore pricing sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore pricing sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "brand_logo"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data() as BrandLogoConfig;
+                  setBrandLogoState((prev) => ({ ...prev, ...data }));
+                  localStorage.setItem("puhayt_brand_logo", JSON.stringify(data));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 4. Portfolio Projects Listener (Real-Time Live Sync)
-    let unsubPortfolio = () => {};
-    try {
-      unsubPortfolio = onSnapshot(
-        collection(db, "portfolio_projects"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const projects = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as PortfolioProject));
-            setPortfolioProjects(projects);
-            localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(projects));
-          } else {
-            // Seed Firestore with default projects so collection is created and permanently stored in Cloud
-            for (const p of PORTFOLIO_PROJECTS) {
-              setDoc(doc(db, "portfolio_projects", p.id), cleanFirestoreData(p)).catch(() => {});
-            }
-          }
-        },
-        (error) => {
-          console.warn("Firestore portfolio sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore portfolio sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "contact_info"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data() as ContactInfo;
+                  setContactInfo(data);
+                  localStorage.setItem("puhayt_contact_info", JSON.stringify(data));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 5. Campaigns Listener
-    let unsubCampaigns = () => {};
-    try {
-      unsubCampaigns = onSnapshot(
-        collection(db, "campaigns"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const camps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as AdCampaign));
-            setCampaigns(camps);
-            localStorage.setItem("puhayt_ad_campaigns", JSON.stringify(camps));
-          } else {
-            for (const c of INITIAL_CAMPAIGNS) {
-              setDoc(doc(db, "campaigns", c.id), cleanFirestoreData(c)).catch(() => {});
-            }
-          }
-        },
-        (error) => {
-          console.warn("Firestore campaigns sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore campaigns sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "location_pin"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data() as LocationPin;
+                  setLocationPin(data);
+                  localStorage.setItem("puhayt_location_pin", JSON.stringify(data));
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 6. SEO Audits Listener
-    let unsubSeo = () => {};
-    try {
-      unsubSeo = onSnapshot(
-        collection(db, "seo_audits"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const audits = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as SEOAuditResult));
-            setSeoAuditHistory(audits);
-          }
-        },
-        (error) => {
-          console.warn("Firestore seo sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore seo sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "payment_settings"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data() as PaymentSettings;
+                  setPaymentSettings(data);
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 7. Brand & Logo Settings Listener (Real-Time Live Sync)
-    let unsubBrandLogo = () => {};
-    try {
-      unsubBrandLogo = onSnapshot(
-        doc(db, "settings", "brand_logo"),
-        (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data() as BrandLogoConfig;
-            setBrandLogoState((prev) => ({ ...prev, ...data }));
-            localStorage.setItem("puhayt_brand_logo", JSON.stringify(data));
-          }
-        },
-        (error) => {
-          console.warn("Firestore brand logo sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore brand logo sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "site_config"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data();
+                  if (typeof data?.showCaseStudies === "boolean") {
+                    setShowCaseStudiesState(data.showCaseStudies);
+                  }
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 8. Contact Info & Socials Listener (Real-Time Live Sync)
-    let unsubContactInfo = () => {};
-    try {
-      unsubContactInfo = onSnapshot(
-        doc(db, "settings", "contact_info"),
-        (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data() as ContactInfo;
-            setContactInfo(data);
-            localStorage.setItem("puhayt_contact_info", JSON.stringify(data));
-          }
-        },
-        (error) => {
-          console.warn("Firestore contact info sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore contact info sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "team_members"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data();
+                  if (Array.isArray(data?.list) && data.list.length > 0) {
+                    setTeamMembers(data.list);
+                    localStorage.setItem("puhayt_team_members", JSON.stringify(data.list));
+                  }
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 9. Location Pin Listener (Real-Time Live Sync)
-    let unsubLocation = () => {};
-    try {
-      unsubLocation = onSnapshot(
-        doc(db, "settings", "location_pin"),
-        (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data() as LocationPin;
-            setLocationPin(data);
-            localStorage.setItem("puhayt_location_pin", JSON.stringify(data));
-          }
-        },
-        (error) => {
-          console.warn("Firestore location sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore location sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "discounts"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data();
+                  if (Array.isArray(data?.list)) {
+                    const cleaned = data.list.filter(
+                      (d: DiscountOffer) => !["disc-welcome-20", "disc-startup-bundle", "disc-referral-vip"].includes(d.id)
+                    );
+                    setDiscounts(cleaned);
+                    localStorage.setItem("puhayt_discounts", JSON.stringify(cleaned));
+                  }
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 10. Payment Settings Listener
-    let unsubPaymentSettings = () => {};
-    try {
-      unsubPaymentSettings = onSnapshot(
-        doc(db, "settings", "payment_settings"),
-        (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data() as PaymentSettings;
-            setPaymentSettings(data);
-          }
-        },
-        (error) => {
-          console.warn("Firestore payment settings sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore payment settings sync initialized", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "public_reviews"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data();
+                  if (Array.isArray(data?.list)) {
+                    setPublicReviews(data.list);
+                    localStorage.setItem("puhayt_public_reviews", JSON.stringify(data.list));
+                  }
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
 
-    // 11. Site Config Listener (Show case studies, features)
-    let unsubSiteConfig = () => {};
-    try {
-      unsubSiteConfig = onSnapshot(
-        doc(db, "settings", "site_config"),
-        (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.data();
-            if (typeof data?.showCaseStudies === "boolean") {
-              setShowCaseStudiesState(data.showCaseStudies);
-            }
-          }
-        },
-        (error) => {
-          console.warn("Firestore site config sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore site config sync initialized", e);
-    }
-
-    // 12. Client Websites Listener (Live Firestore sync for assigned websites)
-    let unsubClientWebsites = () => {};
-    try {
-      unsubClientWebsites = onSnapshot(
-        collection(db, "client_websites"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ClientWebsite));
-            setClientWebsites(list);
-            localStorage.setItem("puhayt_client_websites", JSON.stringify(list));
-          }
-        },
-        (error) => {
-          console.warn("Firestore client websites sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore client websites sync init:", e);
-    }
-
-    // 13. Client Projects Listener (Live project progress & milestones)
-    let unsubClientProjects = () => {};
-    try {
-      unsubClientProjects = onSnapshot(
-        collection(db, "client_projects"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ClientProject));
-            setClientProjects(list);
-            localStorage.setItem("puhayt_client_projects", JSON.stringify(list));
-          }
-        },
-        (error) => {
-          console.warn("Firestore client projects sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore client projects sync init:", e);
-    }
-
-    // 14. Client Direct Chat Listener
-    let unsubClientChats = () => {};
-    try {
-      unsubClientChats = onSnapshot(
-        collection(db, "client_chats"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ClientChatMessage));
-            setClientChatMessages(list);
-            localStorage.setItem("puhayt_client_chats", JSON.stringify(list));
-          }
-        },
-        (error) => {
-          console.warn("Firestore client chats sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore client chats sync init:", e);
-    }
-
-    // 15. Client Invoices Listener
-    let unsubClientInvoices = () => {};
-    try {
-      unsubClientInvoices = onSnapshot(
-        collection(db, "client_invoices"),
-        (snapshot) => {
-          if (!snapshot.empty) {
-            const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as ClientInvoice));
-            setClientInvoices(list);
-            localStorage.setItem("puhayt_client_invoices", JSON.stringify(list));
-          }
-        },
-        (error) => {
-          console.warn("Firestore client invoices sync warning:", error);
-        }
-      );
-    } catch (e) {
-      console.warn("Firestore client invoices sync init:", e);
-    }
+        try {
+          unsubs.push(
+            onSnapshot(
+              doc(db, "settings", "blog_posts"),
+              (snapshot: any) => {
+                if (snapshot.exists()) {
+                  const data = snapshot.data();
+                  if (Array.isArray(data?.list)) {
+                    setBlogPosts(data.list);
+                    localStorage.setItem("puhayt_blog_posts", JSON.stringify(data.list));
+                  }
+                }
+              },
+              () => {}
+            )
+          );
+        } catch {}
+      })
+      .catch(() => {});
 
     return () => {
-      unsubLeads();
-      unsubNotifs();
-      unsubPricing();
-      unsubPortfolio();
-      unsubCampaigns();
-      unsubSeo();
-      unsubBrandLogo();
-      unsubContactInfo();
-      unsubLocation();
-      unsubPaymentSettings();
-      unsubSiteConfig();
-      unsubClientWebsites();
-      unsubClientProjects();
-      unsubClientChats();
-      unsubClientInvoices();
+      cancelled = true;
+      unsubs.forEach((fn) => fn());
     };
-  }, []);
+  }, [firestoreReady]);
+
+  // Authenticated / Admin-Only Firestore Listeners (Prevents unauthenticated permission-denied console errors)
+  useEffect(() => {
+    if (!firestoreReady || (!currentUser && !isDevModeAuthenticated)) return;
+
+    let cancelled = false;
+    const unsubs: Array<() => void> = [];
+
+    getFirebaseDeps()
+      .then(({ db, collection, onSnapshot }) => {
+        if (cancelled) return;
+
+        if (isDevModeAuthenticated || currentUser?.email === "aayushcps0907@gmail.com") {
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "leads"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const fetchedLeads = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as LeadRecord));
+                    setLeads(fetchedLeads);
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "notifications"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const fetched = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as NotificationRecord));
+                    setNotifications(fetched);
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "seo_audits"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const audits = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as SEOAuditResult));
+                    setSeoAuditHistory(audits);
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+        }
+
+        if (currentUser) {
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "client_websites"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const list = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as ClientWebsite));
+                    setClientWebsites(list);
+                    localStorage.setItem("puhayt_client_websites", JSON.stringify(list));
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "client_projects"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const list = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as ClientProject));
+                    setClientProjects(list);
+                    localStorage.setItem("puhayt_client_projects", JSON.stringify(list));
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "client_chats"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const list = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as ClientChatMessage));
+                    setClientChatMessages(list);
+                    localStorage.setItem("puhayt_client_chats", JSON.stringify(list));
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+
+          try {
+            unsubs.push(
+              onSnapshot(
+                collection(db, "client_invoices"),
+                (snapshot: any) => {
+                  if (!snapshot.empty) {
+                    const list = snapshot.docs.map((d: any) => ({ id: d.id, ...d.data() } as ClientInvoice));
+                    setClientInvoices(list);
+                    localStorage.setItem("puhayt_client_invoices", JSON.stringify(list));
+                  }
+                },
+                () => {}
+              )
+            );
+          } catch {}
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      unsubs.forEach((fn) => fn());
+    };
+  }, [firestoreReady, currentUser, isDevModeAuthenticated]);
 
   // Actions
+  const updateTeamMember = async (id: string, updates: Partial<TeamMemberProfile>) => {
+    setTeamMembers((prev) => {
+      const updated = prev.map((m) => (m.id === id ? { ...m, ...updates } : m));
+      localStorage.setItem("puhayt_team_members", JSON.stringify(updated));
+      asyncSetDoc("settings", "team_members", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const addDiscount = async (discountData: Omit<DiscountOffer, "id" | "createdAt">) => {
+    const newOffer: DiscountOffer = {
+      ...discountData,
+      id: "disc-" + Date.now(),
+      createdAt: new Date().toISOString(),
+    };
+    setDiscounts((prev) => {
+      const updated = [newOffer, ...prev];
+      localStorage.setItem("puhayt_discounts", JSON.stringify(updated));
+      asyncSetDoc("settings", "discounts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  // ================= PUBLIC REVIEWS METHODS =================
+  const addPublicReview = async (reviewData: Omit<PublicReview, "id" | "createdAt" | "helpfulCount">) => {
+    const newReview: PublicReview = {
+      ...reviewData,
+      id: "rev-" + Date.now(),
+      helpfulCount: 0,
+      helpfulVoterIds: [],
+      createdAt: new Date().toISOString(),
+    };
+    setPublicReviews((prev) => {
+      const updated = [newReview, ...prev];
+      localStorage.setItem("puhayt_public_reviews", JSON.stringify(updated));
+      asyncSetDoc("settings", "public_reviews", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const markReviewHelpful = async (reviewId: string) => {
+    let voterKey = localStorage.getItem("puhayt_voter_key");
+    if (!voterKey) {
+      voterKey = "v-" + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem("puhayt_voter_key", voterKey);
+    }
+
+    setPublicReviews((prev) => {
+      const updated = prev.map((r) => {
+        if (r.id !== reviewId) return r;
+        const voters = r.helpfulVoterIds || [];
+        const hasVoted = voters.includes(voterKey!);
+        return {
+          ...r,
+          helpfulCount: hasVoted ? Math.max(0, (r.helpfulCount || 1) - 1) : (r.helpfulCount || 0) + 1,
+          helpfulVoterIds: hasVoted ? voters.filter((v) => v !== voterKey) : [...voters, voterKey!],
+        };
+      });
+      localStorage.setItem("puhayt_public_reviews", JSON.stringify(updated));
+      asyncSetDoc("settings", "public_reviews", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const replyToPublicReview = async (reviewId: string, replyText: string, repliedBy = "Puhayt Digital (Founders)") => {
+    setPublicReviews((prev) => {
+      const updated = prev.map((r) => {
+        if (r.id !== reviewId) return r;
+        if (!replyText.trim()) {
+          const { ownerReply, ...rest } = r;
+          return rest as PublicReview;
+        }
+        return {
+          ...r,
+          ownerReply: {
+            text: replyText.trim(),
+            repliedBy,
+            repliedAt: new Date().toISOString(),
+          },
+        };
+      });
+      localStorage.setItem("puhayt_public_reviews", JSON.stringify(updated));
+      asyncSetDoc("settings", "public_reviews", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const deletePublicReview = async (reviewId: string) => {
+    setPublicReviews((prev) => {
+      const updated = prev.filter((r) => r.id !== reviewId);
+      localStorage.setItem("puhayt_public_reviews", JSON.stringify(updated));
+      asyncSetDoc("settings", "public_reviews", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const updateDiscount = async (id: string, updates: Partial<DiscountOffer>) => {
+    setDiscounts((prev) => {
+      const updated = prev.map((d) => (d.id === id ? { ...d, ...updates } : d));
+      localStorage.setItem("puhayt_discounts", JSON.stringify(updated));
+      asyncSetDoc("settings", "discounts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const deleteDiscount = async (id: string) => {
+    setDiscounts((prev) => {
+      const updated = prev.filter((d) => d.id !== id);
+      localStorage.setItem("puhayt_discounts", JSON.stringify(updated));
+      asyncSetDoc("settings", "discounts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  // ================= BLOG & ARTICLES METHODS =================
+  const addBlogPost = async (postData: Omit<BlogPost, "id">) => {
+    const newPost: BlogPost = {
+      ...postData,
+      id: "blog-" + Date.now(),
+    };
+    setBlogPosts((prev) => {
+      const updated = [newPost, ...prev];
+      localStorage.setItem("puhayt_blog_posts", JSON.stringify(updated));
+      asyncSetDoc("settings", "blog_posts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const updateBlogPost = async (id: string, updates: Partial<BlogPost>) => {
+    setBlogPosts((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b));
+      localStorage.setItem("puhayt_blog_posts", JSON.stringify(updated));
+      asyncSetDoc("settings", "blog_posts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const deleteBlogPost = async (id: string) => {
+    setBlogPosts((prev) => {
+      const updated = prev.filter((b) => b.id !== id);
+      localStorage.setItem("puhayt_blog_posts", JSON.stringify(updated));
+      asyncSetDoc("settings", "blog_posts", { list: updated }, { merge: true });
+      return updated;
+    });
+  };
+
+  const restoreDefaultBlogPosts = async () => {
+    setBlogPosts(BLOG_POSTS);
+    localStorage.setItem("puhayt_blog_posts", JSON.stringify(BLOG_POSTS));
+    await asyncSetDoc("settings", "blog_posts", { list: BLOG_POSTS }, { merge: true });
+  };
+
+  // REFERRAL LINK TRACKING & EARNED DISCOUNTS ACTIONS
+  const trackReferralClick = (code?: string, customMeta?: Partial<ReferralClickRecord>) => {
+    const targetCode = code || userReferralCode;
+    const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    setReferralStats((prev) => {
+      const nextClicks = prev.totalClicks + 1;
+      const nextUnique = prev.uniqueVisitors + (Math.random() > 0.35 ? 1 : 0);
+
+      const newClickRecord: ReferralClickRecord = {
+        id: `clk-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        referralCode: targetCode,
+        timestamp: `Today, ${nowStr}`,
+        source: customMeta?.source || "Direct Link",
+        device: customMeta?.device || (/Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop"),
+        location: customMeta?.location || (Math.random() > 0.4 ? "Kolkata, WB" : "Mumbai, MH"),
+        status: customMeta?.status || (Math.random() > 0.75 ? "Inquiry Submitted" : "Visited"),
+      };
+
+      // Check milestone triggers on earned discounts
+      const updatedDiscounts = prev.earnedDiscounts.map((disc) => {
+        if (disc.status === "Locked" && nextClicks >= disc.requiredClicks) {
+          const notif: NotificationRecord = {
+            id: `notif-disc-unlock-${Date.now()}`,
+            title: `🎁 New Referral Discount Unlocked!`,
+            message: `Congratulations! Your referral link hit ${nextClicks} verified clicks. You unlocked "${disc.title}" (${disc.discountValue})!`,
+            type: "system",
+            timestamp: nowStr,
+            read: false,
+          };
+          setNotifications((nPrev) => [notif, ...nPrev]);
+          return {
+            ...disc,
+            status: "Active" as const,
+            unlockedAt: `Today, ${nowStr}`,
+          };
+        }
+        return disc;
+      });
+
+      const updatedStats: UserReferralStats = {
+        ...prev,
+        referralCode: targetCode,
+        totalClicks: nextClicks,
+        uniqueVisitors: nextUnique,
+        inquiriesGenerated: prev.inquiriesGenerated + (newClickRecord.status === "Inquiry Submitted" ? 1 : 0),
+        clickHistory: [newClickRecord, ...prev.clickHistory.slice(0, 49)],
+        earnedDiscounts: updatedDiscounts,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      localStorage.setItem("puhayt_user_referral_stats", JSON.stringify(updatedStats));
+      return updatedStats;
+    });
+  };
+
+  const simulateReferralClick = () => {
+    const sources: ReferralClickRecord["source"][] = ["WhatsApp", "LinkedIn", "Instagram", "Direct Link", "QR Code", "Twitter / X"];
+    const devices: ReferralClickRecord["device"][] = ["Mobile", "Desktop", "Tablet"];
+    const locations = ["Kolkata, WB", "Salt Lake, Kolkata", "Mumbai, MH", "Bengaluru, KA", "New Delhi, DL", "London, UK", "Dubai, UAE"];
+
+    const randomSource = sources[Math.floor(Math.random() * sources.length)];
+    const randomDevice = devices[Math.floor(Math.random() * (Math.random() > 0.35 ? 1 : 3))];
+    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+    const randomStatus = Math.random() > 0.7 ? "Inquiry Submitted" : "Visited";
+
+    trackReferralClick(userReferralCode, {
+      source: randomSource,
+      device: randomDevice,
+      location: randomLocation,
+      status: randomStatus,
+    });
+  };
+
+  const redeemEarnedDiscount = async (discountId: string, invoiceRef?: string): Promise<boolean> => {
+    let success = false;
+    setReferralStats((prev) => {
+      const target = prev.earnedDiscounts.find((d) => d.id === discountId);
+      if (!target) return prev;
+
+      success = true;
+      const today = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const updatedDiscounts = prev.earnedDiscounts.map((d) => {
+        if (d.id === discountId) {
+          return {
+            ...d,
+            status: "Redeemed" as const,
+            redeemedAt: today,
+            appliedInvoiceRef: invoiceRef || "Applied on Active Account",
+          };
+        }
+        return d;
+      });
+
+      const updatedStats = {
+        ...prev,
+        earnedDiscounts: updatedDiscounts,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      localStorage.setItem("puhayt_user_referral_stats", JSON.stringify(updatedStats));
+
+      const notif: NotificationRecord = {
+        id: `notif-disc-redeem-${Date.now()}`,
+        title: `✅ Discount Code Redeemed!`,
+        message: `Claimed "${target.title}" (Code: ${target.code}). Savings of ${target.discountValue} applied!`,
+        type: "payment",
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        read: false,
+      };
+      setNotifications((nPrev) => [notif, ...nPrev]);
+
+      return updatedStats;
+    });
+
+    return success;
+  };
+
+  const resetReferralStats = () => {
+    localStorage.removeItem("puhayt_user_referral_stats");
+    setReferralStats(DEFAULT_USER_REFERRAL_STATS);
+  };
+
+  const updateReferralCode = (newCode: string) => {
+    const clean = newCode.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+    if (!clean) return;
+    setUserReferralCode(clean);
+    localStorage.setItem("puhayt_user_referral_code", clean);
+    setReferralStats((prev) => {
+      const updated = { ...prev, referralCode: clean };
+      localStorage.setItem("puhayt_user_referral_stats", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const updateBrandLogo = (updates: Partial<BrandLogoConfig>) => {
     setBrandLogoState((prev) => {
       const updated = {
@@ -1148,9 +1688,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       } catch (e) {
         console.warn("LocalStorage brand logo save error", e);
       }
-      setDoc(doc(db, "settings", "brand_logo"), cleanFirestoreData(updated)).catch((err) =>
-        console.error("Firestore brand logo write error:", err)
-      );
+      asyncSetDoc("settings", "brand_logo", updated);
       return updated;
     });
   };
@@ -1160,7 +1698,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newIds = new Set(plans.map((p) => p.id));
     pricingPlans.forEach((p) => {
       if (!newIds.has(p.id)) {
-        deleteDoc(doc(db, "pricing_plans", p.id)).catch(() => {});
+        asyncDeleteDoc("pricing_plans", p.id);
       }
     });
 
@@ -1169,9 +1707,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Persist all plans to Firestore
     plans.forEach((p) => {
-      setDoc(doc(db, "pricing_plans", p.id), cleanFirestoreData(p)).catch((err) =>
-        console.error("Firestore pricing plan write error:", err)
-      );
+      asyncSetDoc("pricing_plans", p.id, p);
     });
   };
 
@@ -1181,14 +1717,12 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_pricing_plans", JSON.stringify(updated));
       return updated;
     });
-    deleteDoc(doc(db, "pricing_plans", id)).catch((err) =>
-      console.error(`Firestore pricing plan delete error for ${id}:`, err)
-    );
+    asyncDeleteDoc("pricing_plans", id);
   };
 
   const clearAllPricingPlans = () => {
     pricingPlans.forEach((p) => {
-      deleteDoc(doc(db, "pricing_plans", p.id)).catch(() => {});
+      asyncDeleteDoc("pricing_plans", p.id);
     });
     setPricingPlans([]);
     localStorage.setItem("puhayt_pricing_plans", JSON.stringify([]));
@@ -1203,9 +1737,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const newIds = new Set(projects.map((p) => p.id));
     portfolioProjects.forEach((p) => {
       if (!newIds.has(p.id)) {
-        deleteDoc(doc(db, "portfolio_projects", p.id)).catch((err) =>
-          console.warn("Firestore project delete error:", err)
-        );
+        asyncDeleteDoc("portfolio_projects", p.id);
       }
     });
 
@@ -1215,9 +1747,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // 3. Write each project to Cloud Firestore (Real-time live persistence!)
     projects.forEach((project) => {
-      setDoc(doc(db, "portfolio_projects", project.id), cleanFirestoreData(project)).catch((err) =>
-        console.error(`Firestore project write error for ${project.id}:`, err)
-      );
+      asyncSetDoc("portfolio_projects", project.id, project);
     });
   };
 
@@ -1228,9 +1758,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return updated;
     });
     // Persist immediately to Cloud Firestore
-    setDoc(doc(db, "portfolio_projects", project.id), cleanFirestoreData(project)).catch((err) =>
-      console.error(`Firestore project add error:`, err)
-    );
+    asyncSetDoc("portfolio_projects", project.id, project);
 
     const newNotif: NotificationRecord = {
       id: `notif-port-${Date.now()}`,
@@ -1241,7 +1769,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       read: false,
     };
     setNotifications((prev) => [newNotif, ...prev]);
-    setDoc(doc(db, "notifications", newNotif.id), cleanFirestoreData(newNotif)).catch(() => {});
+    asyncSetDoc("notifications", newNotif.id, newNotif);
   };
 
   const deletePortfolioProject = (id: string) => {
@@ -1250,14 +1778,12 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(updated));
       return updated;
     });
-    deleteDoc(doc(db, "portfolio_projects", id)).catch((err) =>
-      console.error(`Firestore project delete error for ${id}:`, err)
-    );
+    asyncDeleteDoc("portfolio_projects", id);
   };
 
   const clearAllPortfolioProjects = () => {
     portfolioProjects.forEach((p) => {
-      deleteDoc(doc(db, "portfolio_projects", p.id)).catch(() => {});
+      asyncDeleteDoc("portfolio_projects", p.id);
     });
     setPortfolioProjects([]);
     localStorage.setItem("puhayt_portfolio_projects", JSON.stringify([]));
@@ -1269,23 +1795,19 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const setShowCaseStudies = (show: boolean) => {
     setShowCaseStudiesState(show);
-    setDoc(doc(db, "settings", "site_config"), cleanFirestoreData({ showCaseStudies: show }), { merge: true }).catch(() => {});
+    asyncSetDoc("settings", "site_config", { showCaseStudies: show }, { merge: true });
   };
 
   const updateContactInfo = (info: ContactInfo) => {
     setContactInfo(info);
     localStorage.setItem("puhayt_contact_info", JSON.stringify(info));
-    setDoc(doc(db, "settings", "contact_info"), cleanFirestoreData(info), { merge: true }).catch((err) => {
-      console.error("Firestore contact info save error:", err);
-    });
+    asyncSetDoc("settings", "contact_info", info, { merge: true });
   };
 
   const updateLocationPin = (pin: LocationPin) => {
     setLocationPin(pin);
     localStorage.setItem("puhayt_location_pin", JSON.stringify(pin));
-    setDoc(doc(db, "settings", "location_pin"), cleanFirestoreData(pin), { merge: true }).catch((err) => {
-      console.error("Firestore location pin save error:", err);
-    });
+    asyncSetDoc("settings", "location_pin", pin, { merge: true });
   };
 
   const verifyUpiAccount = (bankName: string, upiId: string, mobileNumber: string) => {
@@ -1332,7 +1854,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     setNotifications((prev) => [newNotif, ...prev]);
-    setDoc(doc(db, "notifications", newNotif.id), cleanFirestoreData(newNotif)).catch(() => {});
+    asyncSetDoc("notifications", newNotif.id, newNotif);
 
     return newTxn;
   };
@@ -1348,9 +1870,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setLeads((prev) => [newLead, ...prev]);
 
     // Save lead to Cloud Firestore
-    setDoc(doc(db, "leads", newLead.id), cleanFirestoreData(newLead)).catch((err) =>
-      console.error("Firestore lead save error:", err)
-    );
+    asyncSetDoc("leads", newLead.id, newLead);
 
     const newNotif: NotificationRecord = {
       id: `notif-${Date.now()}`,
@@ -1362,7 +1882,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     setNotifications((prev) => [newNotif, ...prev]);
-    setDoc(doc(db, "notifications", newNotif.id), cleanFirestoreData(newNotif)).catch(() => {});
+    asyncSetDoc("notifications", newNotif.id, newNotif);
   };
 
   const addPaymentAuditLog = (logData: Omit<PaymentAuditLog, "id" | "timestamp">): PaymentAuditLog => {
@@ -1384,7 +1904,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         read: false,
       };
       setNotifications((prev) => [securityNotif, ...prev]);
-      setDoc(doc(db, "notifications", securityNotif.id), cleanFirestoreData(securityNotif)).catch(() => {});
+      asyncSetDoc("notifications", securityNotif.id, securityNotif);
     }
 
     return newLog;
@@ -1396,7 +1916,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const updatePaymentSettings = (settings: PaymentSettings) => {
     setPaymentSettings(settings);
-    setDoc(doc(db, "settings", "payment_settings"), cleanFirestoreData(settings)).catch(() => {});
+    asyncSetDoc("settings", "payment_settings", settings);
   };
 
   // Campaign Actions
@@ -1411,9 +1931,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setCampaigns((prev) => [newCamp, ...prev]);
 
     // Persist campaign to Firestore
-    setDoc(doc(db, "campaigns", newCamp.id), cleanFirestoreData(newCamp)).catch((err) =>
-      console.error("Firestore campaign save error:", err)
-    );
+    asyncSetDoc("campaigns", newCamp.id, newCamp);
 
     const notif: NotificationRecord = {
       id: `notif-camp-${Date.now()}`,
@@ -1424,7 +1942,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       read: false,
     };
     setNotifications((prev) => [notif, ...prev]);
-    setDoc(doc(db, "notifications", notif.id), cleanFirestoreData(notif)).catch(() => {});
+    asyncSetDoc("notifications", notif.id, notif);
     return newCamp;
   };
 
@@ -1433,9 +1951,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const updated = prev.map((c) => (c.id === id ? { ...c, ...updates } : c));
       const target = updated.find((c) => c.id === id);
       if (target) {
-        setDoc(doc(db, "campaigns", id), cleanFirestoreData(target)).catch((err) =>
-          console.error("Firestore campaign update error:", err)
-        );
+        asyncSetDoc("campaigns", id, target);
       }
       return updated;
     });
@@ -1443,9 +1959,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const deleteCampaign = (id: string) => {
     setCampaigns((prev) => prev.filter((c) => c.id !== id));
-    deleteDoc(doc(db, "campaigns", id)).catch((err) =>
-      console.error("Firestore campaign delete error:", err)
-    );
+    asyncDeleteDoc("campaigns", id);
   };
 
   const approveCampaign = (id: string, approved: boolean) => {
@@ -1463,7 +1977,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       );
       const target = updated.find((c) => c.id === id);
       if (target) {
-        setDoc(doc(db, "campaigns", id), cleanFirestoreData(target)).catch(() => {});
+        asyncSetDoc("campaigns", id, target);
       }
       return updated;
     });
@@ -1482,7 +1996,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       );
       const target = updated.find((c) => c.id === id);
       if (target) {
-        setDoc(doc(db, "campaigns", id), cleanFirestoreData(target)).catch(() => {});
+        asyncSetDoc("campaigns", id, target);
       }
       return updated;
     });
@@ -1491,9 +2005,11 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const recordCampaignImpression = (id: string) => {
     setCampaigns((prev) => {
       const updated = prev.map((c) => (c.id === id ? { ...c, impressions: (c.impressions || 0) + 1 } : c));
-      const target = updated.find((c) => c.id === id);
-      if (target) {
-        setDoc(doc(db, "campaigns", id), cleanFirestoreData(target)).catch(() => {});
+      if (firestoreReady && (currentUser || isDevModeAuthenticated)) {
+        const target = updated.find((c) => c.id === id);
+        if (target) {
+          asyncSetDoc("campaigns", id, target);
+        }
       }
       return updated;
     });
@@ -1502,9 +2018,11 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const recordCampaignClick = (id: string) => {
     setCampaigns((prev) => {
       const updated = prev.map((c) => (c.id === id ? { ...c, clicks: (c.clicks || 0) + 1 } : c));
-      const target = updated.find((c) => c.id === id);
-      if (target) {
-        setDoc(doc(db, "campaigns", id), cleanFirestoreData(target)).catch(() => {});
+      if (firestoreReady && (currentUser || isDevModeAuthenticated)) {
+        const target = updated.find((c) => c.id === id);
+        if (target) {
+          asyncSetDoc("campaigns", id, target);
+        }
       }
       return updated;
     });
@@ -1530,9 +2048,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const addSeoAuditResult = (result: SEOAuditResult) => {
     setSeoAuditHistory((prev) => [result, ...prev]);
-    setDoc(doc(db, "seo_audits", result.id), cleanFirestoreData(result)).catch((err) =>
-      handleFirestoreError(err, OperationType.CREATE, `seo_audits/${result.id}`)
-    );
+    asyncSetDoc("seo_audits", result.id, result);
 
     const notif: NotificationRecord = {
       id: `notif-seo-${Date.now()}`,
@@ -1543,7 +2059,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       read: false
     };
     setNotifications((prev) => [notif, ...prev]);
-    setDoc(doc(db, "notifications", notif.id), cleanFirestoreData(notif)).catch(() => {});
+    asyncSetDoc("notifications", notif.id, notif);
   };
 
   const openDevMode = () => {
@@ -1591,7 +2107,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const dismissNotification = (id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-    deleteDoc(doc(db, "notifications", id)).catch(() => {});
+    asyncDeleteDoc("notifications", id);
   };
 
   const clearAllNotifications = () => {
@@ -1607,7 +2123,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return updated;
     });
     try {
-      await setDoc(doc(db, "client_websites", website.id), cleanFirestoreData(website));
+      await asyncSetDoc("client_websites", website.id, website);
       const notif: NotificationRecord = {
         id: `notif-web-${Date.now()}`,
         title: `🌐 Client Website Deployed!`,
@@ -1617,7 +2133,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         read: false,
       };
       setNotifications((prev) => [notif, ...prev]);
-      await setDoc(doc(db, "notifications", notif.id), cleanFirestoreData(notif)).catch(() => {});
+      await asyncSetDoc("notifications", notif.id, notif);
     } catch (err) {
       console.error("Firestore client website write error:", err);
     }
@@ -1629,11 +2145,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_client_websites", JSON.stringify(updated));
       return updated;
     });
-    try {
-      await deleteDoc(doc(db, "client_websites", id));
-    } catch (err) {
-      console.error("Firestore client website delete error:", err);
-    }
+    await asyncDeleteDoc("client_websites", id);
   };
 
   const sendClientChatMessage = async (msg: Omit<ClientChatMessage, "id" | "timestamp" | "read">) => {
@@ -1648,11 +2160,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_client_chats", JSON.stringify(updated));
       return updated;
     });
-    try {
-      await setDoc(doc(db, "client_chats", newMsg.id), cleanFirestoreData(newMsg));
-    } catch (err) {
-      console.error("Firestore chat send error:", err);
-    }
+    await asyncSetDoc("client_chats", newMsg.id, newMsg);
   };
 
   const addOrUpdateClientProject = async (project: ClientProject) => {
@@ -1662,11 +2170,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_client_projects", JSON.stringify(updated));
       return updated;
     });
-    try {
-      await setDoc(doc(db, "client_projects", project.id), cleanFirestoreData(project));
-    } catch (err) {
-      console.error("Firestore client project write error:", err);
-    }
+    await asyncSetDoc("client_projects", project.id, project);
   };
 
   const addClientInvoice = async (invoice: ClientInvoice) => {
@@ -1676,11 +2180,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       localStorage.setItem("puhayt_client_invoices", JSON.stringify(updated));
       return updated;
     });
-    try {
-      await setDoc(doc(db, "client_invoices", invoice.id), cleanFirestoreData(invoice));
-    } catch (err) {
-      console.error("Firestore client invoice write error:", err);
-    }
+    await asyncSetDoc("client_invoices", invoice.id, invoice);
   };
 
   return (
@@ -1769,6 +2269,37 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateBrandLogo,
         isCloudSyncing,
         syncAllToLiveCloud,
+
+        // Team & Discounts
+        teamMembers,
+        updateTeamMember,
+        discounts,
+        addDiscount,
+        updateDiscount,
+        deleteDiscount,
+
+        // Blog & Articles
+        blogPosts,
+        addBlogPost,
+        updateBlogPost,
+        deleteBlogPost,
+        restoreDefaultBlogPosts,
+
+        // Referral Tracking & Earned Discounts Dashboard
+        referralStats,
+        userReferralCode,
+        trackReferralClick,
+        simulateReferralClick,
+        redeemEarnedDiscount,
+        resetReferralStats,
+        updateReferralCode,
+
+        // Real Public Reviews System
+        publicReviews,
+        addPublicReview,
+        markReviewHelpful,
+        replyToPublicReview,
+        deletePublicReview,
       }}
     >
       {children}

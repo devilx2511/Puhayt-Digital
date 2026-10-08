@@ -69,23 +69,23 @@ export function solveUserQuery(userQuery: string): {
   let followUps: string[] = [];
 
   if (isFounder || isProfile) {
-    intentSummary = `You asked about **Founder Trishanjit Dalal** and our signature **Digital Profile** framework.`;
+    intentSummary = `You asked about **Co-Founders Trishanjit Dalal (16) & Aayush Ghosh (17)** and our agency operations.`;
     solutionSteps = [
-      `**Founder's Executive Motto**: *"We help both local and international businesses to make their websites and increase sales, leads and growth, making a Digital Profile for them"* ~ **Trishanjit Dalal**`,
-      `**Zero Subcontracting SLA**: Trishanjit and our senior architects manage your digital architecture directly from our Salt Lake Sector V headquarters.`,
-      `**Digital Profile Core Components**: We construct an ultra-fast 3D website (0.8s mobile Core Web Vitals), Google Search Rank 'Good' semantic schema, localized map-pack dominance, and 1-click WhatsApp customer conversion funnels.`,
-      `**Proven Track Record**: Scaled enterprise revenue from $10M to $42M in 90 days and consistently deliver our verified 1.3X ROAS benchmark.`,
+      `**Trishanjit Dalal (16 Years Old)**: Ads Runner, Performance Marketing (Google & Meta Ads), Payment Management, and Commercial Enquiries. Calling: 10:00 AM to 10:00 PM (+91 70448 11476, IG: @itz___.unknown_13).`,
+      `**Aayush Ghosh (17 Years Old)**: Website Developer, Website Designer, Website Builder, Technical SEO Expert, Domain, Hosting, and Authentication Infrastructure. Calling: 12:30 PM to 10:30 PM (+91 85838 78622, IG: @aayushg.dev).`,
+      `**Transparent Office Policy**: We are 100% honest — we currently still lack our first commercial office. Trishanjit operates out of Kolkata (West Bengal). We travel directly to your office, store, showroom, or business premises anywhere across Kolkata for in-person briefings! For clients outside Kolkata, we meet seamlessly via Google Meet & Zoom.`,
+      `**Zero Subcontracting SLA**: Direct founder attention with clean custom code, genuine Google Lighthouse SEO optimization, and high-ROAS paid ads.`,
     ];
     timeline = "10–14 days for Digital Profile rollout";
     followUps = [
-      "How do we schedule a meeting with Trishanjit Dalal?",
-      "What is the first step to create my Digital Profile?",
-      "Can we meet in person at Salt Lake Sector V?",
+      "Can Trishanjit and Aayush meet at our Kolkata premises?",
+      "How do we start our website build with Aayush Ghosh?",
+      "How do we start Google & Meta ads with Trishanjit Dalal?",
     ];
   } else if (isWebDesign) {
     intentSummary = `You asked about **building a custom website / online platform** for your ${industry} ${mentionedDetails}.`;
     solutionSteps = [
-      `**Bespoke Architecture**: Engineered without templates, WordPress bloat, or slow plugins. Built using modern React and Three.js for interactive visual excellence.`,
+      `**Bespoke Architecture by Aayush Ghosh (17)**: Engineered without templates, WordPress bloat, or slow plugins. Built using modern React and Three.js for interactive visual excellence.`,
       `**Sub-Second Speed (0.8s)**: Rapid Core Web Vitals and zero layout shift ensure shoppers and prospects never drop off during checkout or inquiries.`,
       `**Seamless eCommerce / Lead Conversion**: Complete catalog/product showcase with 1-click WhatsApp checkout funnels and UPI payment gateway integration.`,
       `**Cross-Device Responsiveness**: Handcrafted to adapt seamlessly across mobile phones, tablets, and 4K desktop screens.`,
@@ -100,7 +100,7 @@ export function solveUserQuery(userQuery: string): {
   } else if (isAds || isLeadGen) {
     intentSummary = `You asked how to **generate qualified buyer leads, get new customers/members, and achieve our verified 1.3X ROAS** for your ${industry} ${mentionedDetails}.`;
     solutionSteps = [
-      `**Hyper-Targeted Acquisition Funnel**: For ${industry}, we build geofenced Google Search (intent-driven) and Meta (Instagram/Facebook) campaigns optimized for local radius conversions.`,
+      `**Hyper-Targeted Acquisition Funnel Managed by Trishanjit Dalal (16)**: For ${industry}, we build geofenced Google Search (intent-driven) and Meta (Instagram/Facebook) campaigns optimized for local radius conversions.`,
       `**Verified 1.3X ROAS Baseline**: Zero wasted ad spend. Every rupee goes towards high-intent buyer clicks with negative keyword exclusions to filter unqualified leads.`,
       `**Instant WhatsApp Conversion Hook**: Direct 1-click WhatsApp consultation booking on a sub-second (0.8s) landing page so incoming prospects can book visits or purchases immediately.`,
       `**24/7 AI Lead Nurturing & CRM**: An automated conversational assistant that qualifies prospects, collects requirements, and notifies your sales team in real time.`,
@@ -141,45 +141,45 @@ export function solveUserQuery(userQuery: string): {
       "How will I track live milestones in the Client Portal?",
     ];
   } else if (isSEO) {
-    intentSummary = `You asked about **technical SEO, Google Search Rank 'Good', and search engine domination** for your ${industry}.`;
+    intentSummary = `You asked about **technical SEO and real Google search engine optimization** for your ${industry}.`;
     solutionSteps = [
-      `**Semantic Schema.org JSON-LD**: We inject dynamic Organization, LocalBusiness, Service, and FAQPage structured data to trigger rich snippet accordions in Google search results.`,
-      `**Local Google Maps 3-Pack Supremacy**: Comprehensive geotargeting across Salt Lake Sector V, New Town, Park Street, Kolkata, and nationwide high-intent buyer searches.`,
-      `**Core Web Vitals Engineering**: Sub-second load times that give you an unfair algorithmic ranking advantage over slow competitors.`,
+      `**Technical SEO Led by Aayush Ghosh (17)**: Deep semantic markup (Schema.org JSON-LD), canonical tags, mobile responsive optimization, and sub-second Core Web Vitals.`,
+      `**Accurate Real Audit Data**: No fake 99/100 audit scores. We run actual Google Lighthouse diagnostics and deep analysis to fix genuine performance and indexing blockers.`,
+      `**Local Google Maps 3-Pack Supremacy**: Comprehensive geotargeting across Kolkata and high-intent buyer searches nationwide.`,
       `**High-Intent Keyword Clustering**: Target commercial phrases like "best ${industry.toLowerCase()} in kolkata" that drive paying inquiries, not vanity traffic.`,
     ];
     roas = "Google Search Rank 'Good' with 40%+ organic lead growth";
     followUps = [
-      "Can you run a free SEO audit on my current website?",
+      "Can you run a Google Lighthouse audit on my website?",
       "How long before we rank on Google's first page?",
       "How does FAQPage schema help Google AI Overviews?",
     ];
   } else if (isKolkata) {
-    intentSummary = `You asked about our **Salt Lake Sector V, Kolkata headquarters and in-person executive briefings**.`;
+    intentSummary = `You asked about our **Kolkata base and in-person executive briefings**.`;
     solutionSteps = [
-      `**Prime Headquarters**: Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India (near College More).`,
-      `**In-Person Strategy Meetings**: Founder Trishanjit Dalal and our technical directors host face-to-face executive briefings Monday through Saturday.`,
-      `**Direct Contact**: Phone & WhatsApp: **+91 7044811476** | Email: **contact@puhayt.digital**.`,
-      `**Local & Global Scale**: We serve Kolkata leaders across Sector V, New Town, Park Street, Ballygunge, as well as enterprise clients in the US, UK, and UAE.`,
+      `**Honest Office Model**: We are 100% upfront and transparent — we currently still lack our first commercial office.`,
+      `**Trishanjit's Kolkata Operational Base**: Founder Trishanjit Dalal operates out of Kolkata (West Bengal).`,
+      `**We Meet at Your Premises**: Rather than asking you to travel, our team travels directly to your office, store, showroom, or business premises anywhere across Kolkata for in-person briefings!`,
+      `**Direct Founder Contact**: Phone & WhatsApp: **+91 70448 11476** (Trishanjit: 10 AM – 10 PM | Aayush: 12:30 PM – 10:30 PM).`,
     ];
     followUps = [
-      "Can we schedule an in-person meeting this week?",
-      "What should I bring to our executive briefing?",
-      "Where exactly in Sector V is the office located?",
+      "Can we schedule an in-person meeting at our office this week?",
+      "What areas in Kolkata do you visit for client meetings?",
+      "Can we do a Google Meet before meeting at our premises?",
     ];
   } else {
     // Dynamic Intelligent General Query Resolution
     intentSummary = `You asked: **"${query}"**. Here is Puhayt Digital's structured diagnosis and solution for your ${industry}.`;
     solutionSteps = [
-      `**Founder Trishanjit Dalal's Blueprint**: *"We help both local and international businesses to make their websites and increase sales, leads and growth, making a Digital Profile for them"*.`,
-      `**Tailored Architecture for ${industry}**: We eliminate generic agency fluff and deploy a bespoke 3D responsive website, Google Search Rank 'Good' technical SEO, and verified 1.3X ROAS paid advertising funnels.`,
-      `**Rapid Execution**: Initial digital profile launch in 10 to 14 days with zero subcontracting — all code and campaigns are managed directly by our senior team in Salt Lake Sector V, Kolkata.`,
-      `**Dedicated Client Portal**: Real-time project telemetry, sprint milestone tracking, invoices, and direct messaging with our engineering desk.`,
+      `**Direct Leadership**: Co-founded by Trishanjit Dalal (16, Ads & Marketing) and Aayush Ghosh (17, Web Development & SEO).`,
+      `**Tailored Architecture for ${industry}**: We eliminate generic agency fluff and deploy a bespoke 3D responsive website, accurate Google Lighthouse technical SEO, and verified 1.3X ROAS paid advertising funnels.`,
+      `**Honest Premises Meeting Model**: We still lack our first physical office, so we come directly to your office or business premises anywhere in Kolkata, or connect worldwide via Google Meet and Zoom.`,
+      `**Zero Subcontracting**: 100% in-house engineering and direct founder accountability on every project.`,
     ];
     followUps = [
       `What is the best digital marketing plan for ${industry}?`,
-      "How does Puhayt Digital compare to other Kolkata agencies?",
-      "Can we hop on a quick 10-minute discovery call?",
+      "Can we schedule an in-person briefing at our premises?",
+      "Can we get a real Google Lighthouse audit of our site?",
     ];
   }
 
@@ -188,9 +188,9 @@ export function solveUserQuery(userQuery: string): {
 
 > **Regarding your inquiry:** *"${query}"*
 
-Hello! I am **Puhayt AI Assistant**, speaking directly on behalf of Founder & Lead Architect **Trishanjit Dalal** at **Puhayt Digital**.
+Hello! I am **Puhayt AI**, providing crisp, accurate, and actionable strategy directly on behalf of co-founders **Trishanjit Dalal (16)** and **Aayush Ghosh (17)** at **Puhayt Digital**.
 
-Here is how we specifically understand and solve this for you:
+Here is how we specifically solve this for you:
 
 #### 1. Strategic Roadmap & Execution
 ${solutionSteps.map((step, idx) => `${idx + 1}. ${step}`).join("\n")}
@@ -199,13 +199,14 @@ ${solutionSteps.map((step, idx) => `${idx + 1}. ${step}`).join("\n")}
 - ⏱️ **Estimated Turnaround**: **${timeline}**
 - 💰 **Investment Scope**: **${budget}**
 - 📈 **Performance Target**: **${roas}**
-- 🛡️ **Execution Standard**: **Zero Subcontracting SLA** — 100% in-house engineering at Salt Lake Sector V, Kolkata.
+- 🛡️ **Execution Standard**: **Zero Subcontracting SLA** — 100% in-house engineering by our founding team.
 
-#### 3. Immediate Next Step
-Founder **Trishanjit Dalal** is available directly to review your project specs:
-- 📲 **Direct WhatsApp**: [**+91 7044811476**](https://wa.me/917044811476?text=${encodeURIComponent(`Hi Trishanjit! I asked your AI assistant: "${query}". Can we discuss the next steps for my business?`)})
-- 📍 **Kolkata HQ**: Salt Lake Sector V, Bidhannagar (Near College More)
-- 💼 **Free Consultation**: You can also click below to request a tailored strategy proposal!`;
+#### 3. Operational Model & Direct Connect
+- 🏢 **Office Transparency**: We still lack our first physical office, so **we meet directly at your premises or office anywhere in Kolkata**!
+- 👤 **Trishanjit Dalal (16)**: Ads, Marketing, Payment, Enquiries | Phone/WA: **[+91 70448 11476](tel:+917044811476)** (10 AM – 10 PM) | IG: \`@itz___.unknown_13\`
+- 💻 **Aayush Ghosh (17)**: Web Developer, Designer, SEO, Hosting & Auth | Phone/WA: **[+91 85838 78622](tel:+918583878622)** (12:30 PM – 10:30 PM) | IG: \`@aayushg.dev\`
+- 📲 **Quick WhatsApp**: [**Chat on WhatsApp (+91 70448 11476)**](https://wa.me/917044811476?text=${encodeURIComponent(`Hi Trishanjit & Aayush! I asked your AI assistant: "${query}". We would like to discuss meeting at our premises.`)})
+- 💼 **Strategy Proposal**: You can also submit an inquiry below to receive a custom proposal within 2 hours!`;
 
   return {
     markdownResponse: markdown,

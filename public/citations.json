@@ -1,0 +1,73 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Puhayt Digital",
+  "legalName": "Puhayt Digital Technologies",
+  "url": "https://puhaytdigital.ai.studio/",
+  "canonicalDomain": "https://puhaytdigital.ai.studio",
+  "napCitation": {
+    "name": "Puhayt Digital",
+    "address": "Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India",
+    "telephone": "+91 7044811476",
+    "secondaryTelephone": "+91 8583878622",
+    "email": "contact@puhayt.digital",
+    "supportEmail": "aayushcps0907@gmail.com",
+    "geo": {
+      "latitude": 22.5804,
+      "longitude": 88.4378
+    },
+    "serviceModel": "On-Premises In-Person Founder Visits Across Kolkata + Global Remote Sprints"
+  },
+  "founders": [
+    {
+      "name": "Trishanjit Dalal",
+      "role": "Founder — Ads Runner, Performance Marketing, Payment Management & Enquiries",
+      "phone": "+91 7044811476",
+      "availability": "10:00 AM – 10:00 PM IST",
+      "sameAs": "https://www.instagram.com/itz___.unknown_13/"
+    },
+    {
+      "name": "Aayush Ghosh",
+      "role": "Co-Founder — Website Developer, Designer, Builder, Technical SEO, Domain, Hosting & Authentication",
+      "phone": "+91 8583878622",
+      "availability": "12:30 PM – 10:30 PM IST",
+      "sameAs": "https://www.instagram.com/aayushg.dev/"
+    }
+  ],
+  "coreServices": [
+    "Technical, On-Page, Off-Page & Local SEO Services",
+    "Custom Website Building (React 19 & TypeScript SSR)",
+    "Mobile-First & 3D WebGL Interactive Web Design",
+    "Domain Registration, DNS, Cloud Hosting, SSL & Firebase Authentication",
+    "Comprehensive SEO & Generative Engine Optimization (GEO) Audits",
+    "Google Search PPC & Meta (Instagram/Facebook) Performance Digital Marketing"
+  ],
+  "verifiedDirectoryProfiles": [
+    "https://www.google.com/maps/search/Puhayt+Digital+Kolkata",
+    "https://clutch.co/in/agencies/digital-marketing/kolkata",
+    "https://www.goodfirms.co/directory/city/top-digital-marketing-companies/kolkata",
+    "https://www.designrush.com/agency/digital-marketing",
+    "https://www.sortlist.com/d/digital-marketing/kolkata-wb-in",
+    "https://www.linkedin.com/company/puhayt-digital",
+    "https://www.instagram.com/itz___.unknown_13/",
+    "https://www.instagram.com/aayushg.dev/",
+    "https://github.com/puhaytdigital"
+  ],
+  "verifiedClientPortfolioBacklinks": [
+    "https://luxehomeliving.in",
+    "https://nexuspeerexchange.io",
+    "https://savoriabistro.in",
+    "https://horizonrealtygroup.in",
+    "https://novustech.ai",
+    "https://auracareclinic.in",
+    "https://apexacademytutors.in"
+  ],
+  "syndicationEndpoints": {
+    "sitemap": "https://puhaytdigital.ai.studio/sitemap.xml",
+    "rss": "https://puhaytdigital.ai.studio/rss.xml",
+    "llms": "https://puhaytdigital.ai.studio/llms.txt",
+    "llmsFull": "https://puhaytdigital.ai.studio/llms-full.txt",
+    "geoKnowledgeGraph": "https://puhaytdigital.ai.studio/geo-knowledge-graph.json",
+    "humans": "https://puhaytdigital.ai.studio/humans.txt"
+  }
+}

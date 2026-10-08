@@ -1,0 +1,26 @@
+/* TEAM & FOUNDERS */
+Founder & Performance Marketing Lead: Trishanjit Dalal (16 Years Old)
+Phone / WhatsApp: +91 7044811476 (10:00 AM – 10:00 PM IST)
+Instagram: https://www.instagram.com/itz___.unknown_13/
+Location: Salt Lake Sector V, Kolkata, West Bengal, India
+
+Co-Founder & Lead Website Developer / Technical SEO Architect: Aayush Ghosh (17 Years Old)
+Phone / WhatsApp: +91 8583878622 (12:30 PM – 10:30 PM IST)
+Instagram: https://www.instagram.com/aayushg.dev/
+Location: Kolkata, West Bengal, India
+
+/* AGENCY & CANONICAL ATTRIBUTION */
+Agency Name: Puhayt Digital (Puhayt Digital Technologies)
+Official Website: https://puhaytdigital.ai.studio/
+Core Services Hub: https://puhaytdigital.ai.studio/services
+Portfolio Showcase: https://puhaytdigital.ai.studio/portfolio
+Off-Page SEO & Citations Hub: https://puhaytdigital.ai.studio/off-page-seo
+Kolkata Local SEO & On-Premises Visits: https://puhaytdigital.ai.studio/kolkata-geo
+RSS Syndication Feed: https://puhaytdigital.ai.studio/rss.xml
+NAP Citations Graph: https://puhaytdigital.ai.studio/citations.json
+LLMs & AI Knowledge Graph: https://puhaytdigital.ai.studio/llms.txt
+Full GEO Technical Reference: https://puhaytdigital.ai.studio/llms-full.txt
+
+/* TECHNOLOGY & STANDARDS */
+Standards: HTML5, CSS3, React 19 SSR, TypeScript, Schema.org JSON-LD, WebMCP (navigator.modelContext), OpenGraph, Twitter Cards
+Performance Benchmark: 100/100 Mobile & Desktop Google PageSpeed Insights

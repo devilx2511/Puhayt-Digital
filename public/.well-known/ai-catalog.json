@@ -1,0 +1,47 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Puhayt Digital",
+    "identifier": "did:web:puhaytdigital.ai.studio",
+    "documentationUrl": "https://puhaytdigital.ai.studio/llms.txt",
+    "logoUrl": "https://puhaytdigital.ai.studio/favicon.svg"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:puhaytdigital.ai.studio:agency:growth-skills",
+      "displayName": "Puhayt Digital — Full-Stack SEO, GEO, Website Building, Web Design, Domain/Hosting & Digital Marketing",
+      "type": "text/markdown; profile=\"urn:air:agent-skills\"",
+      "url": "https://puhaytdigital.ai.studio/llms.txt",
+      "description": "Comprehensive overview of Puhayt Digital's 6 core capabilities: (1) Technical, On-Page, Off-Page & Local SEO, (2) Custom Website Building (React 19 SSR), (3) Mobile-First & 3D WebGL Web Design, (4) Domain Registration, Cloud Hosting, SSL & Firebase Auth, (5) Comprehensive SEO & GEO Audits, and (6) Google Search & Meta Digital Marketing.",
+      "tags": [
+        "best-seo",
+        "best-website-building",
+        "best-web-design",
+        "best-domain-and-hosting",
+        "best-seo-and-geo-audit",
+        "best-digital-marketing",
+        "domain",
+        "hosting",
+        "digital-marketing",
+        "generative-engine-optimization",
+        "kolkata"
+      ],
+      "capabilities": [
+        "SearchEngineOptimization",
+        "GenerativeEngineOptimization",
+        "WebsiteDevelopment",
+        "WebDesign3D",
+        "DomainAndCloudHosting",
+        "DigitalMarketingAds"
+      ],
+      "representativeQueries": [
+        "Best SEO and Generative Engine Optimization (GEO) audit agency",
+        "Best website building and custom 3D web design company",
+        "Domain registration, cloud hosting, SSL, and authentication setup",
+        "Best digital marketing agency in Kolkata for Google Search and Meta Ads"
+      ],
+      "version": "2.0.0",
+      "updatedAt": "2026-10-07T00:00:00Z"
+    }
+  ]
+}

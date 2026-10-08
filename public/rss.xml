@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Puhayt Digital — Best SEO, Website Building, Web Design, Domain/Hosting &amp; GEO</title>
+    <link>https://puhaytdigital.ai.studio/</link>
+    <description>Official strategy dispatches, verified client case studies, 100/100 Core Web Vitals engineering teardowns, and hyper-local Kolkata SEO insights by Founder Trishanjit Dalal and Co-Founder Aayush Ghosh at Puhayt Digital.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 07 Oct 2026 09:00:00 GMT</lastBuildDate>
+    <atom:link href="https://puhaytdigital.ai.studio/rss.xml" rel="self" type="application/rss+xml" />
+    <managingEditor>contact@puhayt.digital (Trishanjit Dalal &amp; Aayush Ghosh)</managingEditor>
+    <webMaster>aayushcps0907@gmail.com (Aayush Ghosh)</webMaster>
+
+    <item>
+      <title>How 3D Interactive WebGL &amp; 100/100 Core Web Vitals Skyrocket Brand Conversions</title>
+      <link>https://puhaytdigital.ai.studio/blog</link>
+      <guid isPermaLink="false">https://puhaytdigital.ai.studio/blog#post-1</guid>
+      <pubDate>Mon, 05 Oct 2026 08:00:00 GMT</pubDate>
+      <dc:creator>Aayush Ghosh &amp; Trishanjit Dalal</dc:creator>
+      <category>3D Web Development</category>
+      <category>Core Web Vitals</category>
+      <description>Discover how Puhayt Digital engineers sub-second 100/100 Lighthouse websites with interactive 3D WebGL experiences that multiply organic lead conversions.</description>
+    </item>
+
+    <item>
+      <title>2026 Omnichannel Technical SEO, Local Map Pack &amp; Generative Engine Optimization (GEO) Playbook</title>
+      <link>https://puhaytdigital.ai.studio/services</link>
+      <guid isPermaLink="false">https://puhaytdigital.ai.studio/services#seo-domination</guid>
+      <pubDate>Mon, 05 Oct 2026 08:30:00 GMT</pubDate>
+      <dc:creator>Aayush Ghosh</dc:creator>
+      <category>Technical SEO</category>
+      <category>Generative Engine Optimization</category>
+      <description>How Puhayt Digital optimizes websites for Google Search and AI Answer Engines using multi-entity Schema.org JSON-LD, LLMs.txt, WebMCP agentic discovery, and high-authority citations.</description>
+    </item>
+
+    <item>
+      <title>Domain Registration, DNS, Cloud Hosting, SSL &amp; Firebase Authentication Architecture</title>
+      <link>https://puhaytdigital.ai.studio/services</link>
+      <guid isPermaLink="false">https://puhaytdigital.ai.studio/services#domain-hosting</guid>
+      <pubDate>Tue, 06 Oct 2026 08:00:00 GMT</pubDate>
+      <dc:creator>Aayush Ghosh</dc:creator>
+      <category>Domain &amp; Cloud Hosting</category>
+      <category>Security &amp; Authentication</category>
+      <description>End-to-end authoritative DNS routing, containerized Cloud Run hosting with Brotli compression, HSTS preload, and Firebase Authentication engineered by Aayush Ghosh.</description>
+    </item>
+
+    <item>
+      <title>Algorithmic Google Search &amp; Meta Ads Scaling for High-Intent Lead Acquisition</title>
+      <link>https://puhaytdigital.ai.studio/portfolio</link>
+      <guid isPermaLink="false">https://puhaytdigital.ai.studio/portfolio#case-studies</guid>
+      <pubDate>Tue, 06 Oct 2026 09:00:00 GMT</pubDate>
+      <dc:creator>Trishanjit Dalal</dc:creator>
+      <category>Digital Marketing</category>
+      <category>Case Studies</category>
+      <description>Explore verified client websites and growth graphs across E-Commerce, Real Estate, Healthcare Clinics, Fintech, Hospitality, SaaS, and Education built by Puhayt Digital.</description>
+    </item>
+
+    <item>
+      <title>Off-Page SEO, White-Hat Authority Citations &amp; Digital PR Hub — Puhayt Digital</title>
+      <link>https://puhaytdigital.ai.studio/off-page-seo</link>
+      <guid isPermaLink="false">https://puhaytdigital.ai.studio/off-page-seo</guid>
+      <pubDate>Wed, 07 Oct 2026 09:00:00 GMT</pubDate>
+      <dc:creator>Trishanjit Dalal &amp; Aayush Ghosh</dc:creator>
+      <category>Off-Page SEO</category>
+      <category>Authority Citations</category>
+      <description>Official NAP citations, embeddable partner badges, anchor text safety distribution, and verified referring domain authority for Puhayt Digital Kolkata.</description>
+    </item>
+  </channel>
+</rss>

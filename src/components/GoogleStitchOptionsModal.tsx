@@ -79,15 +79,15 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
       title: "Core Agency Sections",
       items: [
         { label: "Home Experience", id: "home", desc: "Hero, 3D WebGL experience & growth manifesto" },
-        { label: "About Agency", id: "about", desc: "Our executive team, technical stack, mission & Sector V map" },
+        { label: "About Agency", id: "about", desc: "Our executive team, technical stack, mission & office premises policy" },
         { label: "Digital Services", id: "services", desc: "3D Web Development, SEO, Paid Ads & AI Automation" },
-        { label: "Portfolio Showcase", id: "portfolio", desc: "Real verified client projects & interactive case studies" },
-        { label: "Case Studies & ROI", id: "case-studies", desc: "Deep dives into measured revenue transformations" },
+        { label: "Portfolio Showcase", id: "portfolio", desc: "Real verified client projects & interactive builds" },
+        { label: "Referrals & Special Discounts", id: "referrals", desc: "Active promotional savings & custom referral links" },
         { label: "Industries We Serve", id: "industries", desc: "Specialized solutions for E-Commerce, Real Estate, Health, SaaS" },
-        { label: "Transparent Pricing", id: "pricing", desc: "Predictable monthly & annual growth retainers" },
         { label: "Client Testimonials", id: "testimonials", desc: "Verified 5.0 star ratings from founders & CEOs" },
         { label: "Tech & Strategy Blog", id: "blog", desc: "Actionable playbooks on Core Web Vitals & organic growth" },
-        { label: "Kolkata HQ Hub", id: "kolkata-geo", desc: "Sector V presence, verified ROI metrics & local coverage" },
+        { label: "Kolkata Operational Base", id: "kolkata-geo", desc: "Premises meetings across Kolkata & remote globally" },
+        { label: "Off-Page SEO & Authority Citations", id: "off-page-seo", desc: "White-hat backlink engineering, digital PR & NAP citations" },
         { label: "Direct Contact Desk", id: "contact", desc: "Inquiry submission & Calendly strategy booking" },
       ],
     },
@@ -101,29 +101,27 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
       ],
     },
     {
-      title: "Trust, Compliance & Client Portal",
+      title: "Trust & Compliance",
       items: [
-        { label: "Client Portal & Sprints", id: "client-portal", action: () => { onNavigate("client-portal"); openClientDashboard(); onClose(); }, desc: "Real-time project timeline, live websites & billing" },
-        { label: "Instant Website Audit", action: () => { onOpenAudit(); onClose(); }, desc: "Real-time SEO, UX & performance analysis" },
+        { label: "Instant Website Audit", action: () => { onOpenAudit(); onClose(); }, desc: "Real-time Google Lighthouse, SEO & performance analysis" },
         { label: "Google reCAPTCHA Enterprise", desc: "Protected by Google Cloud enterprise token assessments" },
-        { label: "DevMode Master Console", action: () => { openDevMode(); onClose(); }, desc: "Real-time cloud database configuration" },
       ],
     },
   ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-xl animate-fade-in">
-      {/* Stitch Modal Card Container */}
+      {/* Navigator Card Container */}
       <div 
-        id="google-stitch-options-modal"
+        id="quick-navigator-options-modal"
         className="relative w-full max-w-lg sm:max-w-xl bg-[#0C0A08] text-white rounded-t-[32px] sm:rounded-3xl border border-[#D4AF37]/40 ring-1 ring-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.95)] max-h-[90vh] flex flex-col overflow-hidden"
       >
-        {/* Top Google Stitch Decorative Drag Bar on Mobile */}
+        {/* Top Decorative Drag Bar on Mobile */}
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
           <div className="w-12 h-1.5 rounded-full bg-white/20 border border-white/5" />
         </div>
 
-        {/* Header with Google Stitch Accent Stitching */}
+        {/* Header */}
         <div className="p-4 sm:p-5 border-b border-[#D4AF37]/20 flex items-center justify-between shrink-0 bg-[#120F0C]">
           <div className="flex items-center space-x-2.5">
             <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#FFDF73] via-[#D4AF37] to-[#8C6212] flex items-center justify-center text-[#0B0B0B] font-bold shadow-md">
@@ -131,11 +129,11 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-[10px] font-mono font-bold text-[#FFDF73] uppercase tracking-wider">Google Stitch Suite</span>
+                <span className="text-[10px] font-mono font-bold text-[#FFDF73] uppercase tracking-wider">Agency Navigator</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               </div>
               <h2 className="font-serif text-base sm:text-lg font-bold text-white leading-tight">
-                Quick Options &amp; Sitemap
+                Quick Options &amp; Visual Sitemap
               </h2>
             </div>
           </div>
@@ -241,46 +239,46 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
                     </div>
                   </button>
 
-                  {/* Client Portal Dashboard */}
+                  {/* Blog & Articles */}
                   <button
-                    onClick={() => { openClientDashboard(); onClose(); }}
+                    onClick={() => handleJump("blog")}
                     className="p-3 rounded-2xl bg-gradient-to-br from-[#2E1E09] to-[#120B04] border border-[#FFDF73]/40 hover:border-[#FFDF73] transition-all flex items-center space-x-2.5 text-left group"
                   >
                     <div className="w-8 h-8 rounded-xl bg-[#FFDF73]/20 text-[#FFDF73] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Crown className="w-4 h-4" />
+                      <FileText className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-white truncate">Client Portal</div>
-                      <div className="text-[10px] text-[#FFDF73]/80">{currentUser ? "Open Portal" : "Client Sign In"}</div>
+                      <div className="text-xs font-bold text-white truncate">Articles &amp; Blog</div>
+                      <div className="text-[10px] text-[#FFDF73]/80">Growth Insights</div>
                     </div>
                   </button>
                 </div>
               </div>
 
-              {/* Location Card: Kolkata Sector V */}
+              {/* Location Card: Kolkata Operational Base */}
               <div className="p-4 rounded-2xl bg-[#14100A] border border-[#D4AF37]/30 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 text-xs font-bold text-[#FFDF73]">
                     <MapPin className="w-4 h-4 text-[#D4AF37]" />
-                    <span>Kolkata Headquarters</span>
+                    <span>Trishanjit's Kolkata Operational Base</span>
                   </div>
                   <span className="text-[9px] font-mono bg-[#D4AF37]/15 text-[#FFDF73] px-2 py-0.5 rounded-full border border-[#D4AF37]/30 font-bold uppercase">
-                    Salt Lake Sector V
+                    We Meet At Your Premises
                   </span>
                 </div>
                 <p className="text-xs text-neutral-300 leading-relaxed font-light">
-                  {contactInfo.address}
+                  We are 100% transparent: we still lack our first physical office. Founder Trishanjit Dalal operates out of Kolkata (West Bengal). For all Kolkata business clients, we travel directly to your office, store, or business premises for in-person strategy briefings.
                 </p>
                 <div className="pt-1 flex items-center gap-2">
                   <button
                     onClick={() => handleJump("kolkata-geo")}
                     className="flex-1 py-2 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white flex items-center justify-center space-x-1.5 transition-colors"
                   >
-                    <span>View Section &amp; Metrics</span>
+                    <span>View Section &amp; Coverage</span>
                     <ChevronRight className="w-3.5 h-3.5 text-[#D4AF37]" />
                   </button>
                   <a
-                    href="https://maps.google.com/?q=Salt+Lake+Sector+V+Kolkata"
+                    href="https://maps.google.com/?q=Kolkata+West+Bengal+India"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="py-2 px-3 rounded-xl bg-[#D4AF37]/20 hover:bg-[#D4AF37]/30 text-xs font-bold text-[#FFDF73] flex items-center justify-center space-x-1 border border-[#D4AF37]/40 transition-colors"
@@ -291,15 +289,15 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
                 </div>
               </div>
 
-              {/* Google Stitch Mobile & Tablet Architecture Options */}
+              {/* Responsive Architecture Engine */}
               <div className="p-4 rounded-2xl bg-gradient-to-br from-[#120F0B] to-[#0A0806] border border-dashed border-[#D4AF37]/50 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 text-xs font-bold text-[#FFDF73]">
                     <SlidersHorizontal className="w-4 h-4 text-[#D4AF37]" />
-                    <span>Google Stitch Responsive Engine</span>
+                    <span>Adaptive Responsive Engine</span>
                   </div>
                   <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold uppercase">
-                    Stitch Compliant
+                    Cross-Device Optimized
                   </span>
                 </div>
                 <p className="text-[11px] text-neutral-300 leading-relaxed font-light">
@@ -309,7 +307,7 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
                   <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
                     <Smartphone className="w-4 h-4 text-[#FFDF73] mx-auto" />
                     <div className="font-bold text-white text-[11px]">Phone View</div>
-                    <div className="text-[9px] text-neutral-400">Thumb Bottom Dock, 48px touch targets, 3-Dot hub</div>
+                    <div className="text-[9px] text-neutral-400">Thumb Bottom Dock, 48px touch targets, quick hub</div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
                     <Tablet className="w-4 h-4 text-emerald-400 mx-auto" />
@@ -333,7 +331,7 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
                   {[
                     { label: "Services", id: "services" },
                     { label: "Portfolio", id: "portfolio" },
-                    { label: "Pricing", id: "pricing" },
+                    { label: "Referrals & Discounts", id: "referrals" },
                     { label: "AI Suite", id: "ai-suite" },
                     { label: "About Us", id: "about" },
                     { label: "Reviews", id: "testimonials" },
@@ -349,18 +347,6 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {/* DevMode Master Entry */}
-              <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                <span className="text-[11px]">Agency Administrative Tools</span>
-                <button
-                  onClick={() => { openDevMode(); onClose(); }}
-                  className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border border-white/10 flex items-center space-x-1.5 transition-colors font-mono text-[11px]"
-                >
-                  <Lock className="w-3 h-3 text-[#D4AF37]" />
-                  <span>DevMode Console</span>
-                </button>
               </div>
             </>
           ) : (
@@ -426,7 +412,7 @@ export const GoogleStitchOptionsModal: React.FC<GoogleStitchOptionsModalProps> =
             <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Puhayt Digital Kolkata</span>
           </div>
-          <span className="font-mono text-[10px] text-neutral-500">v2.4 Production Engine</span>
+          <span className="font-mono text-[10px] text-neutral-400">Kolkata &amp; Global Delivery</span>
         </div>
       </div>
     </div>

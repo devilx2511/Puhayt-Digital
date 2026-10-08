@@ -72,11 +72,11 @@ export function generateFaqSchemaData(
       },
       {
         question: "Where is Puhayt Digital located in Kolkata and can we meet in person?",
-        answer: `Puhayt Digital's headquarters is located in Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091 (near College More & Tech Hub). We welcome business founders for in-person executive briefings. You can also connect directly via phone or WhatsApp at +91 7044811476.`,
+        answer: `We are 100% upfront and transparent: Puhayt Digital still lacks our first physical office. Co-founder Trishanjit Dalal operates out of Kolkata, West Bengal. For all Kolkata clients, our founders travel directly to your office, store, or business premises for in-person briefings, and we consult remotely worldwide via Google Meet and Zoom. Connect directly via phone or WhatsApp at +91 7044811476.`,
       },
       {
-        question: "What are Puhayt Digital's pricing tiers and delivery timelines?",
-        answer: `We provide transparent pricing: Starter Growth Retainers range from ₹10,000 to ₹25,000/mo, Professional Scale Retainers from ₹25,000 to ₹50,000/mo, and Enterprise Dominance at ₹50,000+/mo. Starter digital profiles launch within 10 to 14 days, custom 3D WebGL platforms in 3 to 4 weeks, and paid ad funnels go live within 48 to 72 hours.`,
+        question: "What are Puhayt Digital's growth retainer packages and delivery timelines?",
+        answer: `We provide clear, predictable retainers: Starter Growth Retainers range from ₹10,000 to ₹25,000/mo, Professional Scale Retainers from ₹25,000 to ₹50,000/mo, and Enterprise Dominance at ₹50,000+/mo. Starter digital profiles launch within 10 to 14 days, custom 3D WebGL platforms in 3 to 4 weeks, and paid ad funnels go live within 48 to 72 hours.`,
       }
     );
   }

@@ -1,25 +1,12 @@
 import React, { useEffect } from "react";
-import { SITE_CONFIG, generateSchemaJsonLd } from "../../config/siteConfig";
+import { SITE_CONFIG, generateSchemaJsonLd, getPageSEOConfig } from "../../config/siteConfig";
 import { JsonLdFAQSchema, FAQItem, generateFaqSchemaData } from "./JsonLdFAQSchema";
 
 export { JsonLdFAQSchema, generateFaqSchemaData };
 export type { FAQItem };
 
-const DEFAULT_KEYWORDS = [
-  "best digital marketing in kolkata",
-  "best digital marketing agency in kolkata",
-  "top digital marketing company in kolkata",
-  "digital marketing agency salt lake sector v",
-  "best seo agency in kolkata",
-  "google ads agency kolkata",
-  "web design company in kolkata",
-  "performance marketing kolkata",
-  "social media marketing agency kolkata",
-  "ai digital marketing kolkata",
-  "Puhayt Digital Kolkata"
-];
-
 interface SEOMetaProps {
+  pageId?: string;
   title?: string;
   description?: string;
   canonicalUrl?: string;
@@ -33,22 +20,34 @@ interface SEOMetaProps {
 }
 
 export const SEOMeta: React.FC<SEOMetaProps> = ({
-  title = `${SITE_CONFIG.brandName} — ${SITE_CONFIG.tagline}`,
-  description = SITE_CONFIG.brandDescription,
-  canonicalUrl = SITE_CONFIG.siteUrl,
+  pageId = "home",
+  title,
+  description,
+  canonicalUrl,
   ogImage = SITE_CONFIG.ogImageUrl,
-  keywords = DEFAULT_KEYWORDS,
-  type = "website",
+  keywords,
+  type,
   lang = "en",
   customFaqs = [],
   serviceCategory,
   includeFaqSchema = true,
 }) => {
-  const keywordsStr = keywords.join(", ");
+  const pageConfig = getPageSEOConfig(pageId);
+  const resolvedTitle = title || pageConfig.title;
+  const resolvedDescription = description || pageConfig.description;
+  const resolvedKeywords = keywords || pageConfig.keywords;
+  const resolvedType = type || pageConfig.ogType;
+  const baseSiteUrl = SITE_CONFIG.siteUrl.replace(/\/$/, "");
+  const resolvedCanonical =
+    canonicalUrl ||
+    (pageConfig.canonicalPath === "/"
+      ? `${baseSiteUrl}/`
+      : `${baseSiteUrl}${pageConfig.canonicalPath}`);
+  const keywordsStr = resolvedKeywords.join(", ");
 
   useEffect(() => {
     // 1. Update Document Title and Root Lang
-    document.title = title;
+    document.title = resolvedTitle;
     document.documentElement.lang = lang;
 
     // Helper to create or update meta tag
@@ -80,45 +79,51 @@ export const SEOMeta: React.FC<SEOMetaProps> = ({
       element.setAttribute("href", href);
     };
 
-    // Standard SEO Tags
-    setMetaTag("name", "description", description);
+    // Standard & Crawler SEO Meta Tags
+    const robotsDirective = pageConfig.noindex
+      ? "noindex, nofollow"
+      : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+    setMetaTag("name", "description", resolvedDescription);
     setMetaTag("name", "keywords", keywordsStr);
-    setMetaTag("name", "author", SITE_CONFIG.brandName);
+    setMetaTag("name", "author", `${SITE_CONFIG.brandName} — Trishanjit Dalal & Aayush Ghosh`);
     setMetaTag("name", "google-site-verification", "googleaed00bfdb63f9280");
-    setMetaTag("name", "robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
-    setLinkTag("canonical", canonicalUrl);
+    setMetaTag("name", "robots", robotsDirective);
+    setMetaTag("name", "googlebot", robotsDirective);
+    setMetaTag("name", "bingbot", robotsDirective);
+    setLinkTag("canonical", resolvedCanonical);
 
     // Geographic / Local GEO Meta Tags (Kolkata, West Bengal, India)
     setMetaTag("name", "geo.region", "IN-WB");
-    setMetaTag("name", "geo.placename", "Kolkata, Salt Lake Sector V");
+    setMetaTag("name", "geo.placename", "Kolkata, Salt Lake Sector V, West Bengal, India");
     setMetaTag("name", "geo.position", "22.5804;88.4378");
     setMetaTag("name", "ICBM", "22.5804, 88.4378");
 
     // Multilingual alternate hreflang links
-    const baseUrl = canonicalUrl.replace(/\/$/, "");
-    setLinkTag("alternate", `${baseUrl}/`, { name: "hreflang", value: "en" });
-    setLinkTag("alternate", `${baseUrl}/hi`, { name: "hreflang", value: "hi" });
-    setLinkTag("alternate", `${baseUrl}/bn`, { name: "hreflang", value: "bn" });
-    setLinkTag("alternate", `${baseUrl}/`, { name: "hreflang", value: "x-default" });
+    setLinkTag("alternate", `${baseSiteUrl}/`, { name: "hreflang", value: "en" });
+    setLinkTag("alternate", `${baseSiteUrl}/?lang=hi`, { name: "hreflang", value: "hi" });
+    setLinkTag("alternate", `${baseSiteUrl}/?lang=bn`, { name: "hreflang", value: "bn" });
+    setLinkTag("alternate", `${baseSiteUrl}/`, { name: "hreflang", value: "x-default" });
 
-    // OpenGraph
-    setMetaTag("property", "og:type", type);
+    // OpenGraph Social Metadata
+    setMetaTag("property", "og:type", resolvedType);
     setMetaTag("property", "og:site_name", SITE_CONFIG.brandName);
-    setMetaTag("property", "og:title", title);
-    setMetaTag("property", "og:description", description);
-    setMetaTag("property", "og:url", canonicalUrl);
+    setMetaTag("property", "og:title", resolvedTitle);
+    setMetaTag("property", "og:description", resolvedDescription);
+    setMetaTag("property", "og:url", resolvedCanonical);
     setMetaTag("property", "og:image", ogImage);
+    setMetaTag("property", "og:image:alt", resolvedTitle);
     setMetaTag("property", "og:locale", lang === "hi" ? "hi_IN" : lang === "bn" ? "bn_IN" : "en_US");
 
-    // Twitter Card
+    // Twitter / X Cards
     setMetaTag("name", "twitter:card", "summary_large_image");
-    setMetaTag("name", "twitter:title", title);
-    setMetaTag("name", "twitter:description", description);
+    setMetaTag("name", "twitter:title", resolvedTitle);
+    setMetaTag("name", "twitter:description", resolvedDescription);
     setMetaTag("name", "twitter:image", ogImage);
+    setMetaTag("name", "twitter:image:alt", resolvedTitle);
     setMetaTag("name", "twitter:site", "@puhaytdigital");
 
-    // JSON-LD Structured Data Injection
-    const schemas = generateSchemaJsonLd();
+    // JSON-LD Structured Data Injection (Page-Specific + Organization + LocalBusiness + FAQ + BreadcrumbList)
+    const schemas = generateSchemaJsonLd(SITE_CONFIG, pageConfig.pageId);
     let schemaScript = document.getElementById("puhayt-schema-jsonld") as HTMLScriptElement | null;
     if (!schemaScript) {
       schemaScript = document.createElement("script");
@@ -126,15 +131,18 @@ export const SEOMeta: React.FC<SEOMetaProps> = ({
       schemaScript.type = "application/ld+json";
       document.head.appendChild(schemaScript);
     }
-    schemaScript.text = JSON.stringify(schemas);
-  }, [title, description, canonicalUrl, ogImage, keywordsStr, type, lang]);
+    schemaScript.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": schemas.map(({ "@context": _ctx, ...rest }) => rest),
+    });
+  }, [resolvedTitle, resolvedDescription, resolvedCanonical, ogImage, keywordsStr, resolvedType, lang, pageConfig.pageId, baseSiteUrl]);
 
-  return includeFaqSchema ? (
+  return includeFaqSchema && customFaqs.length > 0 ? (
     <JsonLdFAQSchema
       customFaqs={customFaqs}
       serviceCategory={serviceCategory}
-      includeAgencyFaqs={true}
-      includeServiceFaqs={true}
+      includeAgencyFaqs={false}
+      includeServiceFaqs={false}
     />
   ) : null;
 };

@@ -20,10 +20,23 @@ function isWebGLAvailable(): boolean {
 export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = true }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [webGlSupported, setWebGlSupported] = useState<boolean>(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() =>
+    typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useEffect(() => {
     const container = mountRef.current;
-    if (!container) return;
+    if (!container || prefersReducedMotion) return;
 
     if (!isWebGLAvailable()) {
       setWebGlSupported(false);
@@ -32,6 +45,8 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
 
     let renderer: THREE.WebGLRenderer | null = null;
     let animationFrameId: number | null = null;
+    let isVisible = true;
+    let isPageVisible = !document.hidden;
     let geometry: THREE.BufferGeometry | null = null;
     let particleMaterial: THREE.PointsMaterial | null = null;
     let coreGeometry: THREE.IcosahedronGeometry | null = null;
@@ -42,36 +57,39 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
     let ringMaterial: THREE.MeshBasicMaterial | null = null;
 
     try {
-      // Scene, Camera, Renderer
+      const width = Math.max(container.clientWidth, 320);
+      const height = Math.max(container.clientHeight, 320);
+      const isMobile = window.innerWidth < 768;
+
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(
-        60,
-        container.clientWidth / container.clientHeight,
-        0.1,
-        1000
-      );
+      const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
       camera.position.z = 18;
 
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, failIfMajorPerformanceCaveat: false });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: false,
+        powerPreference: "low-power",
+        failIfMajorPerformanceCaveat: false,
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5));
       container.appendChild(renderer.domElement);
 
       const handleContextLost = (event: Event) => {
         event.preventDefault();
         if (animationFrameId !== null) {
           cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
         }
         setWebGlSupported(false);
       };
       renderer.domElement.addEventListener("webglcontextlost", handleContextLost, false);
 
-      // Group for objects
       const mainGroup = new THREE.Group();
       scene.add(mainGroup);
 
-      // 1. Gold Particles Geometry
-      const particleCount = 180;
+      // Adaptive particle count for mobile vs desktop to keep main-thread work near 0ms
+      const particleCount = isMobile ? 75 : 140;
       geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
 
@@ -83,7 +101,6 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
 
       geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-      // Particle Texture/Material - Gold tone (#D4AF37)
       particleMaterial = new THREE.PointsMaterial({
         color: new THREE.Color("#D4AF37"),
         size: 0.25,
@@ -95,7 +112,6 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
       const particles = new THREE.Points(geometry, particleMaterial);
       mainGroup.add(particles);
 
-      // 2. Centerpiece: 3D Holographic Wireframe Geometric Core
       coreGeometry = new THREE.IcosahedronGeometry(4.5, 1);
       coreMaterial = new THREE.MeshBasicMaterial({
         color: new THREE.Color("#B8860B"),
@@ -106,7 +122,6 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
       const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
       mainGroup.add(coreMesh);
 
-      // Inner Gold Solid Core
       innerGeometry = new THREE.OctahedronGeometry(2.2, 0);
       innerMaterial = new THREE.MeshBasicMaterial({
         color: new THREE.Color("#D4AF37"),
@@ -117,8 +132,7 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
       const innerMesh = new THREE.Mesh(innerGeometry, innerMaterial);
       mainGroup.add(innerMesh);
 
-      // Floating Ring
-      ringGeometry = new THREE.TorusGeometry(6.5, 0.04, 16, 80);
+      ringGeometry = new THREE.TorusGeometry(6.5, 0.04, 12, 60);
       ringMaterial = new THREE.MeshBasicMaterial({
         color: new THREE.Color("#D4AF37"),
         transparent: true,
@@ -128,40 +142,43 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
       ringMesh.rotation.x = Math.PI / 3;
       mainGroup.add(ringMesh);
 
-      // Mouse Interaction
       let mouseX = 0;
       let mouseY = 0;
       let targetX = 0;
       let targetY = 0;
 
       const handleMouseMove = (event: MouseEvent) => {
-        if (!interactive) return;
+        if (!interactive || isMobile) return;
         const windowHalfX = window.innerWidth / 2;
         const windowHalfY = window.innerHeight / 2;
         mouseX = (event.clientX - windowHalfX) * 0.0008;
         mouseY = (event.clientY - windowHalfY) * 0.0008;
       };
 
-      window.addEventListener("mousemove", handleMouseMove);
+      if (interactive && !isMobile) {
+        window.addEventListener("mousemove", handleMouseMove, { passive: true });
+      }
 
-      // Resize Handler
       const handleResize = () => {
         if (!container || !renderer) return;
-        camera.aspect = container.clientWidth / container.clientHeight;
+        const w = Math.max(container.clientWidth, 320);
+        const h = Math.max(container.clientHeight, 320);
+        camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setSize(w, h);
       };
 
-      window.addEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize, { passive: true });
 
-      // Animation Loop
       const clock = new THREE.Clock();
 
       const animate = () => {
-        if (!renderer) return;
+        if (!renderer || !isVisible || !isPageVisible) {
+          animationFrameId = null;
+          return;
+        }
         const elapsedTime = clock.getElapsedTime();
 
-        // Smooth mouse follow (lerp)
         targetX += (mouseX - targetX) * 0.05;
         targetY += (mouseY - targetY) * 0.05;
 
@@ -176,25 +193,47 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
 
         ringMesh.rotation.z = elapsedTime * 0.12;
 
-        // Animate particles
-        if (geometry) {
-          const positionsAttr = geometry.attributes.position as THREE.BufferAttribute;
-          if (positionsAttr) {
-            const array = positionsAttr.array as Float32Array;
-            for (let i = 0; i < particleCount; i++) {
-              array[i * 3 + 1] += Math.sin(elapsedTime + i) * 0.005;
-            }
-            positionsAttr.needsUpdate = true;
-          }
-        }
-
         renderer.render(scene, camera);
         animationFrameId = requestAnimationFrame(animate);
       };
 
+      const startLoopIfActive = () => {
+        if (isVisible && isPageVisible && animationFrameId === null) {
+          clock.start();
+          animate();
+        }
+      };
+
+      const handleVisibilityChange = () => {
+        isPageVisible = !document.hidden;
+        if (isPageVisible) {
+          startLoopIfActive();
+        } else if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      };
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+          if (isVisible) {
+            startLoopIfActive();
+          } else if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        },
+        { rootMargin: "100px" }
+      );
+      observer.observe(container);
+
       animate();
 
       return () => {
+        observer.disconnect();
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("resize", handleResize);
         if (animationFrameId !== null) {
@@ -219,16 +258,16 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
         renderer?.dispose();
       };
     } catch (e) {
-      console.warn("WebGL initialization failed, falling back to CSS background:", e);
+      console.warn("WebGL initialization fallback:", e);
       setWebGlSupported(false);
     }
-  }, [interactive]);
+  }, [interactive, prefersReducedMotion]);
 
-  if (!webGlSupported) {
+  if (!webGlSupported || prefersReducedMotion) {
     return (
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-60">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#D4AF37]/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-[#B8860B]/10 blur-[100px]" />
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-60" aria-hidden="true">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[90vw] sm:max-w-[600px] h-[350px] sm:h-[600px] rounded-full bg-[#D4AF37]/10 blur-[120px]" />
+        <div className="absolute bottom-1/4 left-1/3 w-full max-w-[80vw] sm:max-w-[500px] h-[300px] sm:h-[500px] rounded-full bg-[#B8860B]/10 blur-[100px]" />
       </div>
     );
   }
@@ -236,8 +275,10 @@ export const ThreeBackground: React.FC<ThreeBackgroundProps> = ({ interactive = 
   return (
     <div
       ref={mountRef}
+      aria-hidden="true"
       className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-80"
     />
   );
 };
 
+export default ThreeBackground;

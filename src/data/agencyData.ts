@@ -1,109 +1,139 @@
-import { ServiceCategory, PortfolioProject, CaseStudy, PricingPlan, Testimonial, BlogPost, ClientPortalData } from "../types";
+import { ServiceCategory, PortfolioProject, CaseStudy, PricingPlan, Testimonial, BlogPost, ClientPortalData, TeamMemberProfile, DiscountOffer, UserReferralStats } from "../types";
 
 export const SERVICE_CATEGORIES: ServiceCategory[] = [
   {
     id: "web-dev",
-    title: "Website Development",
-    description: "High-performance, 3D interactive, ultra-fast websites designed to convert visitors into loyal high-value clients.",
+    title: "Website Building & 3D Web Design",
+    description: "Custom server-pre-rendered React websites, interactive 3D WebGL experiences, and mobile-first UI/UX engineered to convert visitors into clients.",
     iconName: "Globe",
     items: [
       {
         id: "corp-web",
-        name: "Corporate & Luxury Brand Websites",
-        tagline: "Apple & Stripe Level Craftsmanship",
-        description: "Bespoke digital experiences with custom 3D WebGL visuals, fluid micro-interactions, and instant page speed.",
-        features: ["Custom 3D Animations & WebGL", "Sub-second Load Times", "Conversion-Focused UX", "Headless CMS Integration"],
+        name: "Custom Website Building & 3D Web Design",
+        tagline: "Sub-Second Speed & Interactive 3D UX",
+        description: "Bespoke websites built from clean React & TypeScript code with interaction-gated 3D WebGL visuals, fluid micro-interactions, and 100/100 Core Web Vitals.",
+        features: ["Custom React 19 & SSR Pre-Rendering", "Interaction-Gated 3D WebGL Visuals", "Mobile-First Conversion UI/UX", "Direct WhatsApp & Lead CRM Integration"],
         popular: true
       },
       {
         id: "ecom-web",
-        name: "High-Converting E-Commerce",
-        tagline: "Shopify & Custom Headless Stores",
-        description: "Custom e-commerce architectures engineered for maximum checkout conversion, upsells, and global scale.",
-        features: ["Sub-second Checkout Flow", "Dynamic Upsells & Bundling", "Global Currency & Multi-Language", "AI Product Recommendations"]
+        name: "High-Converting E-Commerce Stores",
+        tagline: "Custom Catalogs & Fast Checkout",
+        description: "Custom e-commerce architectures engineered for mobile product discovery, instant filtering, UPI/card checkout flows, and automated order inquiries.",
+        features: ["Sub-Second Catalog Filtering", "UPI & Payment Gateway Integration", "Product Schema.org Markup", "Automated WhatsApp Cart Recovery"]
       },
       {
         id: "web-apps",
-        name: "Custom Web Applications & PWAs",
-        tagline: "Scalable Full-Stack Engineering",
-        description: "React/Next.js client portals, SaaS web apps, and progressive web apps built with robust backends.",
-        features: ["Real-Time Client Dashboards", "Role-Based Access Control", "API First Architecture", "Offline PWA Support"]
+        name: "Full-Stack Web Applications & Portals",
+        tagline: "Scalable Client Dashboards & PWAs",
+        description: "React and Node.js client portals, booking platforms, and progressive web apps with real-time Firestore databases and role-based access.",
+        features: ["Real-Time Client Dashboards", "Role-Based Access Control (RBAC)", "REST API & Webhook Architecture", "Installable PWA Support"]
       }
     ]
   },
   {
     id: "digital-marketing",
-    title: "Digital Marketing & Growth",
-    description: "Data-driven SEO, hyper-targeted Google & Meta ads, and omnichannel performance marketing engines.",
+    title: "SEO, GEO Audits & Digital Marketing",
+    description: "Technical On-Page & Off-Page SEO, Generative Engine Optimization (GEO) audits, and conversion-tracked Google Search & Meta ad funnels.",
     iconName: "TrendingUp",
     items: [
       {
         id: "seo-domination",
-        name: "Omnichannel SEO & Search Domination",
-        tagline: "Rank #1 for Transactional Keywords",
-        description: "Technical SEO, local maps optimization, content clustering, and authoritative backlink acquisition.",
-        features: ["Technical Core Web Vitals Audit", "Programmatic Keyword Engine", "Local Maps 3-Pack Supremacy", "High-Authority Link Building"],
+        name: "Technical, On-Page, Off-Page & Local SEO",
+        tagline: "Sustainable Google Search Visibility",
+        description: "Code-level technical SEO, semantic topic clusters, consolidated Schema.org JSON-LD graphs, Local Map Pack optimization, and white-hat digital PR citations.",
+        features: ["Core Web Vitals & Crawlability Fixes", "Search-Intent Content & H1–H3 Architecture", "Google Business Profile & Local SEO", "White-Hat Off-Page Citations & Backlinks"],
         popular: true
       },
       {
-        id: "ppc-scaling",
-        name: "Performance PPC & Social Ads",
-        tagline: "Google, Meta, TikTok & LinkedIn",
-        description: "Precision-targeted ad campaigns with real-time ROAS optimization, AI creative testing, and retargeting loops.",
-        features: ["Multi-Channel Ad Setup", "AI Creative Split Testing", "High-Converting Landing Pages", "ROAS & Attribution Tracking"]
+        id: "geo-audit",
+        name: "Comprehensive SEO & GEO Technical Audit",
+        tagline: "Google + AI Answer Engine Readiness",
+        description: "25-point diagnostic audit covering Google Search Console indexability, Core Web Vitals, JSON-LD entity accuracy, and AI citation readiness (ChatGPT, Perplexity, Gemini).",
+        features: ["LCP, INP & CLS Performance Teardown", "Canonical, Sitemap & Robots.txt Audit", "LLMs.txt & Speakable Schema Setup", "Prioritized Engineering Fix Roadmap"]
       },
       {
-        id: "lead-gen",
-        name: "High-Intent Lead Generation",
-        tagline: "Exclusive Qualified B2B/B2C Leads",
-        description: "Automated funnels that attract, nurture, and filter high-value decision makers into your calendar.",
-        features: ["Interactive Lead Calculators", "Automated Email Sequences", "SMS & WhatsApp Nurturing", "CRM Synchronization"]
+        id: "ppc-scaling",
+        name: "Google Search Ads & Meta Performance Marketing",
+        tagline: "High-Intent Buyer Lead Acquisition",
+        description: "Precision-targeted Google Search PPC and Instagram/Facebook ad campaigns with dedicated landing pages and real-time ROAS tracking.",
+        features: ["High-Intent Google Search PPC", "Meta (Instagram & Facebook) Retargeting", "Conversion Landing Page Funnels", "Real-Time 1.3X+ Target ROAS Tracking"]
+      }
+    ]
+  },
+  {
+    id: "domain-hosting",
+    title: "Domain, Cloud Hosting & Security",
+    description: "End-to-end custom domain DNS architecture, global edge cloud hosting, automated SSL/TLS encryption, and Firebase user authentication.",
+    iconName: "Shield",
+    items: [
+      {
+        id: "domain-dns",
+        name: "Custom Domain Registration & DNS Setup",
+        tagline: "100% Client Domain Ownership",
+        description: "Strategic domain selection (.com, .in, .ai, .io), authoritative DNS record configuration, and email authentication records for maximum deliverability.",
+        features: ["A, AAAA, CNAME & TXT Record Setup", "SPF, DKIM & DMARC Email Security", "Clean www / non-www 301 Redirects", "100% Client Registrar Ownership"],
+        popular: true
+      },
+      {
+        id: "cloud-hosting",
+        name: "Cloud Run & Edge CDN Web Hosting",
+        tagline: "Sub-100ms TTFB & Auto-Scaling",
+        description: "Containerized cloud hosting with global CDN caching, Brotli/Gzip compression, automated HTTPS/SSL certificates, and enterprise security headers.",
+        features: ["Global Edge CDN & Brotli Compression", "Automated TLS/SSL & HSTS Headers", "Zero-Downtime CI/CD Deployments", "24/7 Health Probes & Uptime Monitoring"]
+      },
+      {
+        id: "auth-security",
+        name: "Website Authentication & Database Security",
+        tagline: "Firebase Auth, OAuth & RBAC Rules",
+        description: "Secure user sign-in systems supporting Google OAuth, Email/Password, Phone OTP, and strict Firestore security rules with reCAPTCHA Enterprise.",
+        features: ["Google OAuth & Email/Phone Login", "Strict Database Security Rules", "Google reCAPTCHA Enterprise Protection", "Protected Client & Admin Portals"]
       }
     ]
   },
   {
     id: "branding",
     title: "Branding & Visual Identity",
-    description: "Luxurious visual identities, iconic logos, brand guidelines, and UI/UX systems that command market authority.",
+    description: "Distinctive brand identities, design systems, and conversion-focused UI/UX wireframes.",
     iconName: "Palette",
     items: [
       {
         id: "brand-identity",
-        name: "Complete Brand Identity & Guidelines",
-        tagline: "Stand Out as the Industry Leader",
-        description: "Typography, color science, metallic foil packaging guidelines, and brand positioning books.",
-        features: ["Logo Suite & Monograms", "Typography & Color Matrix", "3D Brand Mockups & Guidelines", "Business Stationery & Deck Design"],
+        name: "Complete Brand Identity & Digital Profile",
+        tagline: "Cohesive Visual Authority",
+        description: "Logo systems, typographic hierarchy, color architecture, and comprehensive digital profile positioning across web and social channels.",
+        features: ["Vector Logo Suite & Monograms", "Typography & Color Accessibility Matrix", "Social & OpenGraph Share Assets", "Brand Guidelines Documentation"],
         popular: true
       },
       {
         id: "uiux-design",
-        name: "UI/UX & Product Design",
-        tagline: "Intuitive & Elegant User Interfaces",
-        description: "Figma design systems, interactive prototypes, user journey mapping, and conversion rate optimization.",
-        features: ["Figma Design System", "Interactive Wireframes", "User Testing & Heuristics", "Micro-interaction Specifications"]
+        name: "Conversion UI/UX & Prototype Design",
+        tagline: "Intuitive Mobile & Desktop Interfaces",
+        description: "Interactive wireframes, user journey mapping, and conversion rate optimization tailored to reduce friction and increase inquiries.",
+        features: ["Component Design System", "Interactive Responsive Prototypes", "Mobile Touch-Target Ergonomics", "Checkout & Lead Form Optimization"]
       }
     ]
   },
   {
     id: "ai-services",
     title: "AI Services & Automation",
-    description: "Automated AI chatbots, intelligent CRM workflows, appointment booking agents, and AI marketing pipelines.",
+    description: "24/7 AI lead qualification assistants, automated WhatsApp intake workflows, and CRM synchronization.",
     iconName: "Bot",
     items: [
       {
         id: "ai-chatbots",
-        name: "Custom AI Booking & Sales Agents",
-        tagline: "24/7 Intelligent Client Conversion",
-        description: "Trained on your company knowledge base to answer questions, pre-qualify leads, and book calendar appointments.",
-        features: ["Custom Knowledge Base Training", "Multi-Language Conversational AI", "Direct Google Calendar Booking", "CRM Lead Auto-Sync"],
+        name: "Custom AI Booking & Lead Qualification Agents",
+        tagline: "24/7 Intelligent Client Intake",
+        description: "Trained on your actual services and pricing to answer customer questions accurately, pre-qualify leads, and route bookings.",
+        features: ["Custom Business Knowledge Base", "Multi-Language Support (EN / HI / BN)", "Direct WhatsApp & Form Handoff", "Instant Lead Notification Pipeline"],
         popular: true
       },
       {
         id: "crm-workflow",
-        name: "Automated Marketing & CRM Workflows",
-        tagline: "Zero Manual Repetitive Tasks",
-        description: "Seamless automation connecting Zapier, Make, HubSpot, Salesforce, and email marketing platforms.",
-        features: ["Automated Proposal Generation", "Instant Follow-up Triggers", "Invoice Auto-Reminders", "Lead Scoring Intelligence"]
+        name: "Automated WhatsApp & CRM Workflows",
+        tagline: "Streamlined Lead Follow-Up",
+        description: "Automated inquiry routing, instant confirmation messages, and structured lead tracking so no prospect is missed.",
+        features: ["Instant Inquiry Auto-Response", "Structured CRM Lead Dashboard", "Appointment Reminder Triggers", "Lead Source Attribution"]
       }
     ]
   }
@@ -595,56 +625,22 @@ export const PRICING_PLANS: PricingPlan[] = [
   }
 ];
 
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    id: "t1",
-    clientName: "Marcus Vance",
-    role: "Managing Director",
-    company: "Apex Luxury Group",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    rating: 5,
-    platform: "Google",
-    content: "Puhayt Digital completely revolutionized our luxury real estate business. Their 3D web platform and hyper-targeted ad strategy generated $42M in closed sales in just one quarter. Absolute craftsmanship!",
-    resultsAchieved: "$42M Revenue Generated"
-  },
-  {
-    id: "t2",
-    clientName: "Dr. Elena Rostova",
-    role: "Chief Executive Officer",
-    company: "Lumina Health AI",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
-    rating: 5,
-    platform: "Clutch",
-    content: "The AI booking assistant Puhayt built for us reduced patient no-shows by 60% while our organic Google traffic jumped by 280%. The ROI has been phenomenal.",
-    resultsAchieved: "+280% Organic Search Traffic"
-  },
-  {
-    id: "t3",
-    clientName: "Julian Sterling",
-    role: "Founder & CMO",
-    company: "Sterling Private Wealth",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    rating: 5,
-    platform: "Trustpilot",
-    content: "Working with Puhayt feels like having Apple's design team and Stripe's engineering team handling your digital marketing. Highly recommended for any serious brand.",
-    resultsAchieved: "6.8x ROAS on PPC"
-  }
-];
+export const TESTIMONIALS: Testimonial[] = [];
 
 export const BLOG_POSTS: BlogPost[] = [
   {
     id: "blog-1",
     title: "How 3D Interactive Web Design Increases Landing Page Conversions by 310%",
     slug: "3d-web-design-conversion-boost",
-    excerpt: "Discover why static websites are losing leads to immersive 3D WebGL experiences and how Apple-level micro-interactions build instant brand trust.",
-    content: "In 2026, user attention spans are under 3 seconds. Static text and stock photo templates no longer convert high-value buyers...",
+    excerpt: "Discover why static websites are losing leads to immersive 3D WebGL experiences and how sub-second micro-interactions build instant brand trust.",
+    content: "In 2026, user attention spans are under 3 seconds. Static text and generic templates no longer convert high-value buyers. Modern consumers judge a company's credibility within milliseconds of landing on its homepage.\n\nWhen we engineer interactive 3D WebGL experiences paired with sub-second edge delivery, visitors stay 3.4x longer and interact directly with product visualizers and instant WhatsApp conversion funnels.\n\nKey Takeaways for High-Converting Websites:\n• Sub-second First Contentful Paint (FCP) and zero layout shift (CLS).\n• Interactive visual storytelling that highlights your core offer immediately.\n• Frictionless 1-click WhatsApp and direct consultation triggers.",
     author: {
-      name: "Tariq Puhayt",
-      role: "Founder & Head of Brand",
+      name: "Aayush Ghosh",
+      role: "Co-Founder & Web/SEO Architect",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
     },
     category: "Web Design",
-    publishedAt: "Aug 2, 2026",
+    publishedAt: "Oct 2, 2026",
     readTime: "5 min read",
     image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
   },
@@ -652,15 +648,15 @@ export const BLOG_POSTS: BlogPost[] = [
     id: "blog-2",
     title: "The 2026 Google Search Algorithm Shift: How Generative AI & Schema Dominate SEO",
     slug: "2026-google-seo-ai-schema",
-    excerpt: "Learn how to optimize your business for AI Search Overviews, voice search, and schema markup to capture top-of-funnel search traffic.",
-    content: "SEO is no longer just about keyword density; it's about semantic entity graph optimization and programmatic Schema LD structure...",
+    excerpt: "Learn how to optimize your business for AI Search Overviews, local Kolkata map pack dominance, and JSON-LD schema markup to capture high-intent traffic.",
+    content: "SEO is no longer just about keyword density; it is about semantic entity graph optimization, programmatic JSON-LD Schema structure, and Core Web Vitals perfection.\n\nSearch engines and AI answer engines now prioritize websites that provide structured, authoritative data alongside flawless mobile speed. By combining LocalBusiness schema, FAQPage structured data, and high-ROAS Meta & Google ad retargeting, local and national brands can dominate both organic search and paid acquisition.\n\nActionable SEO Checklist:\n• Implement comprehensive JSON-LD Organization and Service schema.\n• Achieve 100/100 Lighthouse Performance, Accessibility, Best Practices, and SEO.\n• Align landing page copy with high-intent buyer search queries.",
     author: {
-      name: "Sarah Chen",
-      role: "Director of SEO",
+      name: "Trishanjit Dalal",
+      role: "Co-Founder & Ads/Marketing Lead",
       avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
     },
     category: "SEO",
-    publishedAt: "Jul 28, 2026",
+    publishedAt: "Sep 28, 2026",
     readTime: "7 min read",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
   }
@@ -703,8 +699,271 @@ export const DEMO_CLIENT_PORTAL: ClientPortalData = {
 };
 
 export const OFFICE_LOCATIONS = [
-  { city: "New York", address: "55 Hudson Yards, 34th Floor, NY 10001", phone: "+1 (212) 890-4300" },
-  { city: "Dubai", address: "DIFC Gate Precinct Building 4, Level 6, UAE", phone: "+971 4 450 8200" },
-  { city: "London", address: "100 Bishopsgate, City of London, EC2N 4AG", phone: "+44 20 7946 0912" },
-  { city: "Singapore", address: "Marina Bay Financial Centre Tower 1, Singapore", phone: "+65 6823 1100" }
+  {
+    city: "Kolkata, West Bengal (In-Person Client Briefings)",
+    address: "Trishanjit's Location, Kolkata Metro Area — We still lack our first commercial office, but we travel directly to your premises anywhere in Kolkata for in-person meetings!",
+    phone: "+91 70448 11476"
+  },
+  {
+    city: "Worldwide Remote Engineering",
+    address: "Global Virtual Strategy via Google Meet & Zoom — 100% In-House Code & Growth Pipelines",
+    phone: "+91 70448 11476"
+  }
 ];
+
+export const DEFAULT_TEAM_MEMBERS: TeamMemberProfile[] = [
+  {
+    id: "trishanjit-dalal",
+    name: "Trishanjit Dalal",
+    age: 16,
+    roleTitle: "Ads Runner & Marketing Lead",
+    skills: ["Ads Runner", "Marketing", "Payment", "Enquiries"],
+    phone: "+91 70448 11476",
+    whatsapp: "+91 7044811476",
+    callingHours: "10:00 AM to 10:00 PM",
+    instagramUsername: "@itz___.unknown_13",
+    instagramUrl: "https://www.instagram.com/itz___.unknown_13/",
+    imageUrl: "",
+    bio: "Co-Founder managing performance ad architectures (Meta & Google PPC), client payment processing, commercial acquisition, and strategic inquiries.",
+    accentBadge: "Ads & Marketing Lead",
+  },
+  {
+    id: "aayush-ghosh",
+    name: "Aayush Ghosh",
+    age: 17,
+    roleTitle: "Website Developer & SEO Expert",
+    skills: [
+      "Website Developer",
+      "Website Designer",
+      "Website Builder",
+      "SEO Expert",
+      "Domain, Hosting, and Authentication"
+    ],
+    phone: "+91 85838 78622",
+    whatsapp: "+91 8583878622",
+    callingHours: "12:30 PM to 10:30 PM",
+    instagramUsername: "@aayushg.dev",
+    instagramUrl: "https://www.instagram.com/aayushg.dev/",
+    imageUrl: "",
+    bio: "Co-Founder engineering bespoke interactive websites, technical SEO dominance, domain infrastructure, high-speed cloud hosting, and secure authentication.",
+    accentBadge: "Web & SEO Architect",
+  },
+];
+
+export const DEFAULT_DISCOUNTS: DiscountOffer[] = [
+  {
+    id: "disc-1791032885740",
+    title: "DURGA PUJA OFFER",
+    badge: "FESTIVE SPECIAL",
+    offerType: "Offer",
+    discountAmount: "FLAT ₹2,026 OFF",
+    code: "PUHAYTPUJA2026",
+    description:
+      "Celebrate Durga Puja with Puhayt Digital! Subscribe to any eligible Puhayt Digital service between 1st October and 22nd October 2026 and get an exclusive flat ₹2,026 discount on your subscription.",
+    validUntil: "1st October 2026 – 22nd October 2026",
+    terms:
+      "• Offer valid from 1st October 2026 through 22nd October 2026. • Customers must subscribe and complete eligible payment during the offer period. • Flat ₹2,026 discount applies when the promo code PUJA2026 is successfully applied. • Offer is subject to eligible Puhayt Digital services/packages. • Cannot be combined with other promotional discounts unless specifically permitted by Puhayt Digital. • One redemption per eligible customer unless otherwise specified. • Offer expires automatically after 22nd October 2026. • Puhayt Digital reserves the right to verify eligibility and modify or discontinue the offer if required.",
+    active: true,
+    createdAt: "2026-10-03T13:08:05.740Z",
+    images: [
+      {
+        id: "img-1791032881684",
+        url: "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/a4t3hmd8ybyunsp9aolo",
+        caption:
+          "DURGA PUJA SPECIAL 🎉 Subscribe to Puhayt Digital from 1st October to 22nd October 2026 and get a flat ₹2,026 discount. Celebrate the festive season with better websites, smarter marketing and bigger growth!",
+      },
+    ],
+  },
+  {
+    id: "disc-1791032557831",
+    title: "FIRST 25",
+    badge: "LAUNCH OFFER",
+    offerType: "Discount",
+    discountPercentage: "25% OFF",
+    code: "PUHAYT25",
+    description:
+      "Get an exclusive 25% discount on your Puhayt Digital services as one of our first 25 clients. This special launch offer is available only to the first 25 clients who successfully subscribe to our services.",
+    validUntil: "Valid until Puhayt Digital gets its first 25 clients.",
+    terms:
+      "• Offer is available only to the first 25 clients of Puhayt Digital. • Discount applicable only when the promo code PUHAYT25 is applied during subscription/purchase. • Maximum 25 successful redemptions in total. • Once the first 25 client slots are filled, this offer automatically ends. • Offer cannot be combined with other discounts or promotional offers. • Discount is applicable according to the eligible Puhayt Digital service/package. • Promo code is intended for one eligible client redemption unless otherwise specified by Puhayt Digital. • Puhayt Digital reserves the right to verify eligibility and modify or discontinue the offer after the first 25 client slots are filled.",
+    active: true,
+    createdAt: "2026-10-03T13:02:37.831Z",
+    images: [
+      {
+        id: "img-1791032551025",
+        url: "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/vw6fksloxj0kr4u1vxbv",
+        caption:
+          "FIRST 25 CLIENTS — Get 25% OFF Puhayt Digital services. Limited launch offer available only until our first 25 clients.",
+      },
+    ],
+  },
+  {
+    id: "disc-1791031495899",
+    title: "REFER & EARN",
+    badge: "EXCLUSIVE REFERRAL",
+    offerType: "Referral",
+    discountAmount: "FLAT ₹1,000 CASHBACK",
+    code: "PUHAYT-REF-5TNEL",
+    description:
+      "Refer any business to Puhayt Digital. When your referred business subscribes to any eligible Puhayt Digital service and completes payment, you receive ₹1,000 cashback, while the newly referred business receives ₹500 cashback on their subscription payment. Referral rewards are available one time only per successful referral.",
+    validUntil: "Forever",
+    terms:
+      "• Available exclusively to existing subscribed Puhayt Digital clients. • Referrer receives ₹1,000 cashback only after the referred business successfully subscribes and completes payment. • The referred new business receives ₹500 cashback after completing its eligible subscription payment. • Both cashback rewards are one-time only per successful referral. • Referral must be registered/verified with Puhayt Digital before the referred business subscribes. • Referral cannot be applied to an existing Puhayt Digital client or previously registered lead. • Cashback is subject to verification and Puhayt Digital's eligibility criteria. • Puhayt Digital reserves the right to modify or discontinue the referral offer with notice.",
+    active: true,
+    createdAt: "2026-10-03T12:44:55.899Z",
+    images: [
+      {
+        id: "img-1791031482661",
+        url: "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/ua0fxuoa8oej8vf4l10x",
+        caption:
+          "REFER & EARN — Get ₹1,000 Cashback for every successful business referral, while the new business gets ₹500 Cashback. One-time reward. Grow Together. Go Further.",
+      },
+    ],
+  },
+];
+
+export const DEFAULT_USER_REFERRAL_STATS: UserReferralStats = {
+  referralCode: "PUHAYT-REF-GOLD88",
+  totalClicks: 14,
+  uniqueVisitors: 11,
+  inquiriesGenerated: 2,
+  totalSavingsEarned: "₹25,000 + 20% OFF",
+  lastUpdated: new Date().toISOString(),
+  clickHistory: [
+    {
+      id: "clk-101",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Today, 10:42 AM",
+      source: "WhatsApp",
+      device: "Mobile",
+      location: "Kolkata, WB",
+      status: "Inquiry Submitted"
+    },
+    {
+      id: "clk-102",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Today, 08:15 AM",
+      source: "LinkedIn",
+      device: "Desktop",
+      location: "Bengaluru, KA",
+      status: "Visited"
+    },
+    {
+      id: "clk-103",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Yesterday, 09:30 PM",
+      source: "WhatsApp",
+      device: "Mobile",
+      location: "Salt Lake, Kolkata",
+      status: "Inquiry Submitted"
+    },
+    {
+      id: "clk-104",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Yesterday, 04:18 PM",
+      source: "Direct Link",
+      device: "Desktop",
+      location: "Mumbai, MH",
+      status: "Visited"
+    },
+    {
+      id: "clk-105",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Jul 31, 2026",
+      source: "Instagram",
+      device: "Mobile",
+      location: "New Delhi, DL",
+      status: "Visited"
+    },
+    {
+      id: "clk-106",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Jul 30, 2026",
+      source: "QR Code",
+      device: "Mobile",
+      location: "Kolkata, WB",
+      status: "Visited"
+    },
+    {
+      id: "clk-107",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Jul 28, 2026",
+      source: "WhatsApp",
+      device: "Mobile",
+      location: "Hyderabad, TS",
+      status: "Visited"
+    },
+    {
+      id: "clk-108",
+      referralCode: "PUHAYT-REF-GOLD88",
+      timestamp: "Jul 25, 2026",
+      source: "LinkedIn",
+      device: "Desktop",
+      location: "London, UK",
+      status: "Visited"
+    }
+  ],
+  earnedDiscounts: [
+    {
+      id: "earn-disc-1",
+      title: "10% Welcome Project Discount",
+      code: "PUHAYT-REF10-WELCOME",
+      discountValue: "10% OFF",
+      tierName: "Tier 1: Explorer Milestone",
+      requiredClicks: 1,
+      status: "Active",
+      unlockedAt: "Jul 20, 2026",
+      description: "Eligible for any bespoke 3D website design, cloud speed optimization, or technical SEO sprint.",
+      claimInstruction: "Apply this promo code during checkout or share with Trishanjit (+91 70448 11476) before project onboarding."
+    },
+    {
+      id: "earn-disc-2",
+      title: "₹5,000 Direct Service Credit",
+      code: "PUHAYT-CASH-5K",
+      discountValue: "₹5,000 Flat Credit",
+      tierName: "Tier 2: Advocate Milestone",
+      requiredClicks: 5,
+      status: "Active",
+      unlockedAt: "Jul 25, 2026",
+      description: "Flat cash deduction valid on sprint invoice milestones or monthly Google & Meta ad management.",
+      claimInstruction: "Quote coupon code PUHAYT-CASH-5K on your active invoice or mention during in-person Kolkata briefing."
+    },
+    {
+      id: "earn-disc-3",
+      title: "20% High-Growth Retainer Discount",
+      code: "PUHAYT-ELITE-20",
+      discountValue: "20% OFF",
+      tierName: "Tier 3: Elite Brand Partner",
+      requiredClicks: 10,
+      status: "Active",
+      unlockedAt: "Jul 31, 2026",
+      description: "High-tier discount unlocked for referring 10+ visitors. Applies to full-stack website builds or paid advertising retainers.",
+      claimInstruction: "Ready to redeem! Click Redeem to claim and apply to your upcoming client contract."
+    },
+    {
+      id: "earn-disc-4",
+      title: "₹15,000 Project Credit + Free SEO Speed Audit",
+      code: "PUHAYT-VIP-15K",
+      discountValue: "₹15,000 + Free SEO Audit",
+      tierName: "Tier 4: Enterprise Ambassador",
+      requiredClicks: 25,
+      status: "Locked",
+      description: "The ultimate ambassador reward: ₹15,000 off custom software/e-commerce development plus a comprehensive PageSpeed & SEO audit.",
+      claimInstruction: "Unlocked once your referral link reaches 25 total verified clicks."
+    },
+    {
+      id: "earn-disc-5",
+      title: "1 Month Complimentary Cloud Maintenance & CDN",
+      code: "PUHAYT-HOST-FREE",
+      discountValue: "1 Month Free Cloud Hosting",
+      tierName: "Bonus: Client Referral Kickoff",
+      requiredClicks: 8,
+      status: "Redeemed",
+      unlockedAt: "Jul 10, 2026",
+      redeemedAt: "Jul 15, 2026",
+      appliedInvoiceRef: "INV-2026-0881",
+      description: "1 month of high-speed cloud edge hosting and technical monitoring.",
+      claimInstruction: "Successfully redeemed and applied to Invoice INV-2026-0881 with NPCI token validation."
+    }
+  ]
+};

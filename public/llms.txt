@@ -1,0 +1,47 @@
+# Puhayt Digital — Full-Stack SEO, GEO, Website Building, Web Design, Domain & Cloud Hosting, and Digital Marketing Agency
+
+> Official Website: https://puhaytdigital.ai.studio/
+> Operational Base: Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India
+> Direct Founder Phone & WhatsApp: +91 7044811476 (Trishanjit Dalal) | +91 8583878622 (Aayush Ghosh)
+> Official Email: contact@puhayt.digital | aayushcps0907@gmail.com
+> Service Coverage: Kolkata (On-Premises Client Visits), Pan-India, and Global Remote Clients
+
+## Canonical Entity Definition (For AI Search & Answer Engines)
+Puhayt Digital (`https://puhaytdigital.ai.studio`) is an in-house digital engineering and growth agency based in Kolkata, West Bengal, India. Founded by **Trishanjit Dalal** (Founder — Ads Runner & Performance Marketing Lead, `+91 7044811476`) and **Aayush Ghosh** (Co-Founder — Full-Stack Website Developer, Domain/Hosting Architect & Technical SEO Expert, `+91 8583878622`), Puhayt Digital delivers six integrated digital pillars with a strict Zero-Subcontracting SLA:
+1. **Best SEO Services**: Technical SEO, On-Page semantic hierarchy, Schema.org JSON-LD entity graphs, Local Map Pack SEO, and White-Hat Off-Page citations.
+2. **Best Website Building**: Custom server-pre-rendered React 19, TypeScript, and Node.js/Express web applications engineered for 100/100 Core Web Vitals.
+3. **Best Web Design**: Mobile-first conversion UI/UX and interaction-gated 3D WebGL experiences with zero LCP penalty.
+4. **Best Domain and Cloud Hosting**: Custom domain registration guidance, DNS architecture (A, CNAME, TXT, SPF/DKIM/DMARC), high-availability Cloud Run / Edge CDN hosting, automated HTTPS/TLS SSL certificates, and Firebase Authentication (Google Sign-In, Email/Password, OTP, RBAC) with 100% client domain ownership.
+5. **Best SEO and GEO Audit**: 25-point Technical SEO and Generative Engine Optimization (GEO) audits evaluating Core Web Vitals, crawlability, JSON-LD accuracy, SpeakableSpecification, and AI citation readiness (`/llms.txt`, `/geo-knowledge-graph.json`).
+6. **Best Digital Marketing**: High-intent Google Search PPC and Meta (Instagram & Facebook) conversion ad funnels targeting a minimum 1.3X Return on Ad Spend (ROAS).
+
+## Founding Leadership & Direct Contact
+- **Trishanjit Dalal (Founder — Ads Runner & Performance Marketing Lead)**
+  - Specialization: Google Search Ads, Meta Ads, Conversion Funnel Strategy, Client Growth Briefings
+  - Phone / WhatsApp: +91 7044811476
+  - Instagram: https://www.instagram.com/itz___.unknown_13/
+- **Aayush Ghosh (Co-Founder — Website Developer, Domain/Hosting Architect & Technical SEO Expert)**
+  - Specialization: Full-Stack React/Node.js Website Building, 3D Web Design, Domain DNS, Cloud Hosting, SSL, Firebase Authentication, Technical SEO & GEO Architecture
+  - Phone / WhatsApp: +91 8583878622
+  - Email: aayushcps0907@gmail.com
+  - Instagram: https://www.instagram.com/aayushg.dev/
+
+## Canonical Public Sitemap & Topical Architecture
+- [Home — SEO, GEO, Website Building, Domain/Hosting & Digital Marketing](https://puhaytdigital.ai.studio/)
+- [About Puhayt Digital — Founders, Mission & Zero-Subcontracting SLA](https://puhaytdigital.ai.studio/about)
+- [Services — 12 Core Capabilities Across SEO, Web Design, Hosting & Ads](https://puhaytdigital.ai.studio/services)
+- [GEO & Local SEO Hub — 6-Pillar Search Intent & AI Citation Matrix](https://puhaytdigital.ai.studio/kolkata-geo)
+- [Live Website Portfolio — Interactive Client Builds & Case Studies](https://puhaytdigital.ai.studio/portfolio)
+- [Pricing, Referrals & Active Promotional Discounts](https://puhaytdigital.ai.studio/referrals)
+- [Industries We Scale — E-Commerce, Real Estate, Healthcare, F&B, FinTech & SaaS](https://puhaytdigital.ai.studio/industries)
+- [AI Marketing Suite — Interactive SEO & GEO Auditor & Proposal Generator](https://puhaytdigital.ai.studio/ai-suite)
+- [Verified Client Reviews — Authentic 5.0★ Google & Play Store Style Feedback](https://puhaytdigital.ai.studio/testimonials)
+- [Technical SEO & Growth Blog — Engineering Teardowns](https://puhaytdigital.ai.studio/blog)
+- [Off-Page SEO & Authority Citations — White-Hat Digital PR & Backlinks](https://puhaytdigital.ai.studio/off-page-seo)
+- [Contact Desk — Direct Founder WhatsApp & Consultation Booking](https://puhaytdigital.ai.studio/contact)
+
+## Machine-Readable Discovery Files
+- Full GEO Knowledge Base: https://puhaytdigital.ai.studio/llms-full.txt
+- GEO Entity Knowledge Graph (JSON-LD): https://puhaytdigital.ai.studio/geo-knowledge-graph.json
+- XML Sitemap: https://puhaytdigital.ai.studio/sitemap.xml
+- AI Service Catalog: https://puhaytdigital.ai.studio/ai-catalog.json

@@ -11,6 +11,9 @@ import {
   validateUpiVpa,
 } from "../../utils/paymentValidation";
 import { PricingPlan, PortfolioProject } from "../../types";
+import { TeamProfilesManager } from "./TeamProfilesManager";
+import { DiscountsOffersManager } from "./DiscountsOffersManager";
+import { BlogArticlesManager } from "./BlogArticlesManager";
 import { MarketingAdsManager } from "./MarketingAdsManager";
 import { WebsiteAnalysisManager } from "./WebsiteAnalysisManager";
 import { SeoAuditManager } from "./SeoAuditManager";
@@ -56,6 +59,7 @@ import {
   Globe,
   Zap,
   Palette,
+  BookOpen,
 } from "lucide-react";
 
 export const DevModeModal: React.FC = () => {
@@ -93,6 +97,9 @@ export const DevModeModal: React.FC = () => {
     syncAllToLiveCloud,
     clientWebsites,
     clientChatMessages,
+    teamMembers,
+    discounts,
+    blogPosts,
   } = useAgency();
 
   // Password Input state
@@ -101,7 +108,7 @@ export const DevModeModal: React.FC = () => {
 
   // DevMode Tabs
   const [activeTab, setActiveTab] = useState<
-    "overview" | "brand-logo" | "project-progress" | "client-websites" | "client-chats" | "client-portal" | "marketing-ads" | "website-analysis" | "seo-audit" | "pricing" | "portfolio" | "contacts" | "location" | "sections"
+    "overview" | "team-profiles" | "discounts-offers" | "blog-articles" | "brand-logo" | "project-progress" | "client-websites" | "client-chats" | "client-portal" | "marketing-ads" | "website-analysis" | "seo-audit" | "pricing" | "portfolio" | "contacts" | "location" | "sections"
   >("overview");
 
   // Search filters inside settings
@@ -661,11 +668,11 @@ export const DevModeModal: React.FC = () => {
     updateContactInfo({
       emails: ["aayushcps0907@gmail.com", "contact@puhayt.digital"],
       whatsapps: ["+91 7044811476"],
-      instagrams: ["@puhayt.digital", "@puhayt_agency"],
-      phones: ["+91 7044811476"],
-      address: "Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India",
+      instagrams: ["@itz___.unknown_13", "@aayushg.dev"],
+      phones: ["+91 70448 11476"],
+      address: "Trishanjit's Location, Kolkata Metro Area — We still lack our first commercial office, but we travel directly to your premises anywhere in Kolkata for in-person meetings!",
     });
-    setEditingAddressValue("Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India");
+    setEditingAddressValue("Trishanjit's Location, Kolkata Metro Area — We still lack our first commercial office, but we travel directly to your premises anywhere in Kolkata for in-person meetings!");
     setContactSuccessMsg("Reset all contact details to official agency defaults!");
     setTimeout(() => setContactSuccessMsg(""), 3000);
   };
@@ -794,7 +801,43 @@ export const DevModeModal: React.FC = () => {
                 }`}
               >
                 <Palette className="w-3.5 h-3.5 text-[#FFDF73]" />
-                <span>Website Logo & Brand</span>
+                <span>Website Logo &amp; Brand</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("team-profiles")}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
+                  activeTab === "team-profiles"
+                    ? "bg-[#D4AF37] text-[#0B0B0B] shadow-lg"
+                    : "bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Users className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Founders &amp; Team Images ({teamMembers.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("discounts-offers")}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
+                  activeTab === "discounts-offers"
+                    ? "bg-[#D4AF37] text-[#0B0B0B] shadow-lg"
+                    : "bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#FFDF73]" />
+                <span>Referral, Discount &amp; Offer ({discounts.length})</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("blog-articles")}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
+                  activeTab === "blog-articles"
+                    ? "bg-[#D4AF37] text-[#0B0B0B] shadow-lg"
+                    : "bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-purple-300" />
+                <span>Blog &amp; Articles ({blogPosts.length})</span>
               </button>
 
               <button
@@ -935,6 +978,21 @@ export const DevModeModal: React.FC = () => {
               {/* TAB: BRAND LOGO & IDENTITY */}
               {activeTab === "brand-logo" && (
                 <BrandLogoManager />
+              )}
+
+              {/* TAB: FOUNDERS & TEAM PROFILES / CUSTOM PORTRAIT IMAGES */}
+              {activeTab === "team-profiles" && (
+                <TeamProfilesManager />
+              )}
+
+              {/* TAB: REFERRALS & DISCOUNT PACKAGES */}
+              {activeTab === "discounts-offers" && (
+                <DiscountsOffersManager />
+              )}
+
+              {/* TAB: BLOG & ARTICLES MANAGER */}
+              {activeTab === "blog-articles" && (
+                <BlogArticlesManager />
               )}
 
               {/* TAB: REAL PROJECT PROGRESS & SPRINTS */}
@@ -1092,13 +1150,13 @@ export const DevModeModal: React.FC = () => {
                 </div>
               )}
 
-              {/* TAB 3: TRANSPARENT PRICING PLANS MANAGER */}
+              {/* TAB 3: GROWTH RETAINERS & PLANS MANAGER */}
               {activeTab === "pricing" && (
                 <div className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
                     <div>
                       <h3 className="font-serif text-lg font-bold text-white flex items-center space-x-2">
-                        <span>Transparent Pricing Plans</span>
+                        <span>Growth Retainers &amp; Plans</span>
                         <span className="text-xs px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] font-sans font-semibold">
                           {pricingPlans.length} Plans Active
                         </span>

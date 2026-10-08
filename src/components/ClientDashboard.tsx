@@ -31,8 +31,10 @@ import {
   FileText,
   User,
   Zap,
-  ArrowUpRight
+  ArrowUpRight,
+  Gift
 } from "lucide-react";
+import { ClientReferralDashboard } from "./ClientReferralDashboard";
 
 interface ClientDashboardProps {
   isOpen: boolean;
@@ -51,10 +53,11 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({ isOpen, onClos
     clientInvoices,
     transactions,
     sendClientChatMessage,
-    openPaymentModal
+    openPaymentModal,
+    referralStats
   } = useAgency();
 
-  const [activeTab, setActiveTab] = useState<"progress" | "milestones" | "invoices" | "websites" | "chat">("progress");
+  const [activeTab, setActiveTab] = useState<"progress" | "milestones" | "invoices" | "websites" | "chat" | "referrals">("progress");
   const [chatInput, setChatInput] = useState("");
   const [previewWebsite, setPreviewWebsite] = useState<ClientWebsite | null>(null);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
@@ -352,6 +355,23 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({ isOpen, onClos
                       {userChatThread.length}
                     </span>
                   )}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("referrals")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
+                  activeTab === "referrals"
+                    ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20"
+                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <Gift className="w-3.5 h-3.5 text-[#FFDF73]" />
+                <span className="flex items-center space-x-1.5">
+                  <span>Referrals &amp; Discounts</span>
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#D4AF37]/30 text-[#FFDF73] text-[10px] font-mono">
+                    {referralStats.totalClicks}
+                  </span>
                 </span>
               </button>
             </div>
@@ -853,6 +873,16 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({ isOpen, onClos
                       <Send className="w-3.5 h-3.5" />
                     </button>
                   </form>
+                </div>
+              )}
+
+              {/* 6. REFERRALS & EARNED DISCOUNTS */}
+              {activeTab === "referrals" && (
+                <div className="space-y-6 animate-fadeIn">
+                  <ClientReferralDashboard
+                    onNavigateToInvoices={() => setActiveTab("invoices")}
+                    onNavigateToChat={() => setActiveTab("chat")}
+                  />
                 </div>
               )}
 

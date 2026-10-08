@@ -89,11 +89,10 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Connection check on boot
+// Optional manual connection check helper (not called eagerly on boot to keep initial page load fast and error-free)
 export async function testFirebaseConnection(): Promise<boolean> {
   try {
-    await getDocFromServer(doc(db, "test", "connection"));
-    console.log("Connected to Firebase Firestore successfully.");
+    await getDocFromServer(doc(db, "settings", "site_config"));
     return true;
   } catch (error) {
     if (error instanceof Error && error.message.includes("the client is offline")) {
@@ -102,6 +101,3 @@ export async function testFirebaseConnection(): Promise<boolean> {
     return false;
   }
 }
-
-// Execute connection test on import
-testFirebaseConnection().catch(() => {});

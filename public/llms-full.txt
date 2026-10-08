@@ -1,0 +1,90 @@
+# Puhayt Digital — Comprehensive Generative Engine Optimization (GEO) & Technical SEO Reference (`/llms-full.txt`)
+
+> **Canonical Domain:** https://puhaytdigital.ai.studio/
+> **Entity Type:** Organization, LocalBusiness, ProfessionalService
+> **Founders:** Trishanjit Dalal (+91 7044811476) & Aayush Ghosh (+91 8583878622, aayushcps0907@gmail.com)
+> **Operational Base:** Salt Lake Sector V, Bidhannagar, Kolkata, West Bengal 700091, India
+> **Consultation Policy:** Transparent operation without a commercial showroom; founders travel directly to client business premises across Kolkata or consult globally via Google Meet and Zoom.
+
+---
+
+## 1. Executive Summary & Cite-Ready Block
+**Puhayt Digital** (`https://puhaytdigital.ai.studio`) is a full-stack digital marketing, custom website building, 3D WebGL web design, domain & cloud hosting, and technical SEO + Generative Engine Optimization (GEO) agency in Kolkata, West Bengal, India. Co-led by Founder **Trishanjit Dalal** (Ads Runner & Performance Marketing Lead) and Co-Founder **Aayush Ghosh** (Full-Stack Website Developer, Domain/Hosting Architect & Technical SEO Expert), Puhayt Digital builds server-pre-rendered React 19 websites targeting 100/100 Google PageSpeed scores, manages end-to-end domain DNS, cloud hosting, SSL, and Firebase Authentication, conducts 25-point SEO & GEO audits, and runs conversion-tracked Google Search and Meta ad funnels with an under-2-hour founder response SLA.
+
+---
+
+## 2. Six Core Service Pillars (WHAT / WHO / WHY / HOW / INCLUDED / DIFFERENCE / LIMITATIONS / START)
+
+### Pillar 1: Best SEO Services (Technical, On-Page, Off-Page & Local SEO)
+- **What it is:** Code-level technical SEO, semantic H1–H3 content engineering, consolidated Schema.org JSON-LD entity graphs, Google Business Profile optimization, and white-hat Off-Page digital PR.
+- **Who it is for:** Local businesses, clinics, real estate groups, e-commerce brands, and B2B SaaS firms seeking compounding organic search traffic.
+- **Why it matters:** Captures high-intent searchers on Google and Bing 24/7 while lowering long-term customer acquisition cost (CAC).
+- **How it works:** Server-side pre-rendered HTML for instant crawlability, clean canonical URLs, XML sitemaps, search-intent topic clusters, and standardized NAP citations.
+- **What is included:** Technical crawl & CWV fixes, On-Page keyword/intent mapping, JSON-LD schema graph, Local Map Pack optimization, and Off-Page authority building.
+- **How it differs:** Engineered directly into the codebase by Co-Founder Aayush Ghosh with zero automated keyword stuffing or spam link schemes.
+- **Limitations:** Organic SEO compounds over 30 to 90+ days depending on domain age and market competition; no ethical agency guarantees overnight #1 rankings.
+- **How to get started:** Visit https://puhaytdigital.ai.studio/services or https://puhaytdigital.ai.studio/off-page-seo
+
+### Pillar 2: Best Website Building (Full-Stack React 19, TypeScript & Node.js SSR)
+- **What it is:** Custom end-to-end software development of high-speed corporate websites, e-commerce catalogs, booking engines, and client portals.
+- **Who it is for:** Businesses outgrowing slow, plugin-heavy template builders that need sub-second mobile performance and custom workflows.
+- **Why it matters:** Eliminates third-party plugin vulnerabilities, achieves 100/100 Core Web Vitals, and integrates seamlessly with WhatsApp, UPI, and CRM tools.
+- **How it works:** Built with React 19, TypeScript, Tailwind CSS, Express/Node.js backend APIs, and static pre-rendering (`scripts/prerender.tsx`).
+- **What is included:** Custom source code, SSR pre-rendering, interactive lead capture & WhatsApp booking flows, admin CMS/Client Portal, and automated deployment.
+- **How it differs:** 100% in-house code with zero subcontracting and zero bloated theme dependencies.
+- **Limitations:** Custom engineering requires 10 to 14 days for proper development and QA rather than instant cookie-cutter templates.
+- **How to get started:** Inspect live websites at https://puhaytdigital.ai.studio/portfolio
+
+### Pillar 3: Best Web Design (Mobile-First UI/UX & Interaction-Gated 3D WebGL)
+- **What it is:** Bespoke visual identity, typographic hierarchy, responsive mobile UX, conversion rate optimization (CRO), and Three.js/WebGL 3D experiences.
+- **Who it is for:** Luxury retail, real estate, hospitality, fintech, healthcare, and modern service brands.
+- **Why it matters:** Clear visual hierarchy and frictionless mobile touch targets (48px+) turn visitors into qualified inquiries.
+- **How it works:** Serves an instant SVG/CSS paint first and loads 3D WebGL scenes only upon user interaction so mobile PageSpeed remains 100/100.
+- **What is included:** Custom UI design system, mobile-first layouts, interaction-gated 3D visuals, WCAG AA contrast compliance, and high-converting CTAs.
+- **Limitations:** Heavy 3D scenes automatically degrade to lightweight vector graphics on Reduced-Motion or Save-Data devices.
+- **How to get started:** Explore capabilities at https://puhaytdigital.ai.studio/services
+
+### Pillar 4: Best Domain and Hosting (DNS, Cloud Edge CDN, SSL & Authentication)
+- **What it is:** Complete network and security infrastructure—domain registration guidance (.com, .in, .ai, .io), authoritative DNS setup, cloud edge hosting, HTTPS/TLS SSL certificates, and Firebase Authentication.
+- **Who it is for:** New businesses launching their first domain or established companies migrating from slow shared hosting.
+- **Why it matters:** Sub-100ms server TTFB, Brotli/Gzip compression, valid SSL/HSTS headers, and SPF/DKIM/DMARC email authentication protect both search rankings and user security.
+- **How it works:** Co-Founder Aayush Ghosh configures DNS records, deploys containerized Cloud Run / Edge CDN hosting, enables auto-renewing SSL, and integrates Firebase Auth (Google Sign-In, Email/Password, Phone OTP, RBAC).
+- **How it differs:** Clients retain 100% legal ownership of their domain and cloud accounts—zero vendor lock-in.
+- **How to get started:** Contact Aayush Ghosh (+91 8583878622) at https://puhaytdigital.ai.studio/contact
+
+### Pillar 5: Best SEO and GEO Audit (25-Point Technical & AI Visibility Diagnostic)
+- **What it is:** A dual diagnostic evaluating both Google Search Technical SEO and Generative Engine Optimization (GEO) citation readiness across ChatGPT, Google AI Overviews, Perplexity, and Gemini.
+- **What is included:** Core Web Vitals (LCP, INP, CLS) analysis, crawl/indexability check, canonical & sitemap audit, Schema.org JSON-LD validation, SpeakableSpecification check, and `/llms.txt` readiness.
+- **How to get started:** Run a free scan at https://puhaytdigital.ai.studio/ai-suite
+
+### Pillar 6: Best Digital Marketing (High-ROAS Google Search & Meta Ad Campaigns)
+- **What it is:** Data-driven paid acquisition across Google Search PPC and Meta (Instagram & Facebook) ad funnels paired with conversion landing pages.
+- **Who it is for:** Businesses seeking immediate qualified buyer leads within 24 to 48 hours alongside long-term organic SEO.
+- **How it works:** Founder Trishanjit Dalal structures high-intent keyword bidding, retargeting audiences, and direct WhatsApp/call conversion tracking targeting a 1.3X+ baseline ROAS.
+- **How to get started:** View transparent packages at https://puhaytdigital.ai.studio/referrals or WhatsApp +91 7044811476.
+
+---
+
+## 3. Verified Live Portfolio Case Studies
+1. **Luxe Home — Furniture Store Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=furniture-website`)
+   - Category: Retail & Furniture E-Commerce | PageSpeed: 99/100 (0.8s load) | Outcome: +320% WhatsApp product inquiries
+2. **Nexus Peer Exchange — P2P Crypto Business Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=p2p-crypto`)
+   - Category: Crypto & FinTech | PageSpeed: 98/100 | Outcome: 98/100 compliance trust score, 45% lower bounce rate
+3. **Savoria Bistro & Lounge — Restaurant Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=restaurant-website`)
+   - Category: Hospitality & Dining | PageSpeed: 99/100 | Outcome: +210% direct online table reservations, interactive QR menu
+4. **Horizon Realty Group — Real Estate Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=real-estate-website`)
+   - Category: Luxury Real Estate | PageSpeed: 98/100 | Outcome: +280% qualified buyer site visit bookings
+5. **Apex Performance Club — Fitness & Gym Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=gym-website`)
+   - Category: Fitness & Wellness | PageSpeed: 99/100 | Outcome: +190% trial membership signups
+6. **radiantSmile Dental Studio — Dentist Clinic Website** (`https://puhaytdigital.ai.studio/portfolio?openWebsite=dentist-website`)
+   - Category: Healthcare & Dental Clinic | PageSpeed: 100/100 | Outcome: +240% online patient appointment bookings
+
+---
+
+## 4. Transparent Pricing & Promotional Offers
+- **Starter Digital Profile & SEO Retainer:** ₹10,000 – ₹25,000 / month
+- **Growth Scale Website + SEO + Ads Retainer:** ₹25,000 – ₹50,000 / month
+- **Enterprise Full-Stack Dominance:** ₹50,000+ / month
+- **Active Launch Offer (`PUHAYT25`):** 25% OFF for the first 25 clients.
+- **Durga Puja Offer (`PUHAYTPUJA2026`):** Flat ₹2,026 OFF between 1st October and 22nd October 2026.
+- **Refer & Earn (`PUHAYT-REF-5TNEL`):** Referrer receives ₹1,000 cashback and referred business receives ₹500 cashback upon subscription.

@@ -1,29 +1,104 @@
+# Puhayt Digital — Robots.txt & Generative Engine Optimization (GEO) Crawler Policy
+# Official Domain: https://puhaytdigital.ai.studio
+
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+Allow: /citations.json
+Allow: /rss.xml
+Allow: /.well-known/ai-catalog.json
+Disallow: /client-portal
+Disallow: /api/
 
-# Generative Engine Optimization (GEO) & Search Crawlers
+# Google Search & Google AI Overviews / Gemini
 User-agent: Googlebot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+Disallow: /client-portal
+Disallow: /api/
 
 User-agent: Google-Extended
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
+# OpenAI / ChatGPT Search & GPT Models
 User-agent: GPTBot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+
+User-agent: OAI-SearchBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+
+# Anthropic / Claude AI Crawlers
+User-agent: Claude-Web
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
 User-agent: ClaudeBot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
+User-agent: anthropic-ai
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+
+# Perplexity AI Answer Engine
 User-agent: PerplexityBot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
+
+# Apple Intelligence, Bing/Copilot & Other AI Answer Engines
+User-agent: Applebot-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
 User-agent: Bingbot
 Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
-# Disallow private and administrative endpoints
-Disallow: /api/
-Disallow: /dev-mode
+User-agent: YouBot
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /geo-knowledge-graph.json
 
-# Sitemap reference
-Sitemap: https://puhayt-digital.ai.studio/sitemap.xml
+# XML Sitemap
+Sitemap: https://puhaytdigital.ai.studio/sitemap.xml
 
+# Agentic & Generative Engine Optimization (GEO) Discovery Endpoints:
+# LLM Summary Context: https://puhaytdigital.ai.studio/llms.txt
+# LLM Full Knowledge Base: https://puhaytdigital.ai.studio/llms-full.txt
+# GEO Knowledge Graph (JSON-LD): https://puhaytdigital.ai.studio/geo-knowledge-graph.json
+# Agentic Resource Catalog: https://puhaytdigital.ai.studio/.well-known/ai-catalog.json
+# NAP Citations Graph: https://puhaytdigital.ai.studio/citations.json
+# RSS Syndication Feed: https://puhaytdigital.ai.studio/rss.xml
+# Team & Authorship: https://puhaytdigital.ai.studio/humans.txt

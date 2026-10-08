@@ -42,7 +42,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   const selectedGradient = gradientStyles[emblemGradient] || gradientStyles.gold;
 
-  // Sizing definitions — Big, prominent logo emblem mark with small, refined typography
+  // Sizing definitions — Big, prominent logo emblem mark with refined typography
   const sizeConfig = {
     sm: {
       box: "w-11 h-11 min-w-[44px]",
@@ -87,32 +87,33 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   const renderEmblemIcon = () => {
     switch (emblemIcon) {
       case "crown":
-        return <Crown className={cfg.icon} />;
+        return <Crown className={cfg.icon} aria-hidden="true" />;
       case "shield":
-        return <Shield className={cfg.icon} />;
+        return <Shield className={cfg.icon} aria-hidden="true" />;
       case "flame":
-        return <Flame className={cfg.icon} />;
+        return <Flame className={cfg.icon} aria-hidden="true" />;
       case "gem":
-        return <Gem className={cfg.icon} />;
+        return <Gem className={cfg.icon} aria-hidden="true" />;
       case "zap":
-        return <Zap className={cfg.icon} />;
+        return <Zap className={cfg.icon} aria-hidden="true" />;
       case "globe":
-        return <Globe className={cfg.icon} />;
+        return <Globe className={cfg.icon} aria-hidden="true" />;
       case "sparkles":
       default:
-        return <Sparkles className={cfg.icon} />;
+        return <Sparkles className={cfg.icon} aria-hidden="true" />;
     }
   };
 
   // Render the visual logo mark
   const renderLogoMark = () => {
-    // If a custom image exists and hasn't errored
     if (logoType === "custom_image" && logoUrl && !imageError) {
       return (
         <div className="relative flex items-center justify-center shrink-0">
           <img
             src={logoUrl}
-            alt={brandName}
+            alt={`${brandName} ${brandSuffix}`}
+            width={64}
+            height={64}
             className={`${cfg.img} object-contain rounded-lg drop-shadow-[0_2px_10px_rgba(212,175,55,0.25)] transition-transform duration-300 group-hover:scale-105`}
             onError={() => setImageError(true)}
             referrerPolicy="no-referrer"
@@ -121,21 +122,21 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       );
     }
 
-    // Emblem with Icon
     if (logoType === "emblem_icon") {
       return (
         <div
           className={`${cfg.box} rounded-2xl bg-gradient-to-tr ${selectedGradient} border p-1 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-105 shrink-0`}
+          aria-hidden="true"
         >
           {renderEmblemIcon()}
         </div>
       );
     }
 
-    // Emblem with Letter (Default Puhayt Monogram)
     return (
       <div
         className={`${cfg.box} rounded-2xl bg-gradient-to-tr ${selectedGradient} border flex items-center justify-center font-black font-serif shadow-[0_0_20px_rgba(212,175,55,0.35)] transition-transform duration-300 group-hover:scale-105 shrink-0`}
+        aria-hidden="true"
       >
         <span className={`leading-none text-current font-black tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)] ${cfg.letter}`}>
           {emblemLetter}
@@ -144,13 +145,29 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
     );
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const interactiveProps = onClick
+    ? {
+        role: "button" as const,
+        tabIndex: 0,
+        onClick,
+        onKeyDown: handleKeyDown,
+        ...(variant === "icon-only" ? { "aria-label": `${brandName} ${brandSuffix} Home` } : {}),
+      }
+    : {};
+
   // Icon only
   if (variant === "icon-only") {
     return (
       <div
-        onClick={onClick}
+        {...interactiveProps}
         className={`inline-flex items-center justify-center cursor-pointer group ${className}`}
-        id="brand-logo-icon"
       >
         {renderLogoMark()}
       </div>
@@ -161,9 +178,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   if (variant === "text-only") {
     return (
       <div
-        onClick={onClick}
+        {...interactiveProps}
         className={`flex flex-col cursor-pointer leading-none group select-none ${className}`}
-        id="brand-logo-text"
       >
         <div className={`font-serif font-bold tracking-wider text-white ${cfg.text} flex items-center gap-1`}>
           <span>{brandName}</span>
@@ -175,7 +191,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           )}
         </div>
         {showTagline && tagline && (
-          <span className={`text-neutral-400 font-sans tracking-wide mt-0.5 ${cfg.tag}`}>
+          <span className={`text-neutral-300 font-sans tracking-wide mt-0.5 ${cfg.tag}`}>
             {tagline}
           </span>
         )}
@@ -186,9 +202,8 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   // Full: Mark + Text
   return (
     <div
-      onClick={onClick}
+      {...interactiveProps}
       className={`inline-flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none ${className}`}
-      id="brand-logo-full"
     >
       {renderLogoMark()}
 
@@ -203,7 +218,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           )}
         </div>
         {showTagline && tagline && (
-          <span className={`text-neutral-400 font-sans tracking-wide mt-1 font-normal ${cfg.tag}`}>
+          <span className={`text-neutral-300 font-sans tracking-wide mt-1 font-normal ${cfg.tag}`}>
             {tagline}
           </span>
         )}

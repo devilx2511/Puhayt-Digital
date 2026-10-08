@@ -28,9 +28,14 @@ import {
   Code2,
   Rocket,
   ChevronRight,
-  Layers
+  Layers,
+  Gift,
+  Tag,
+  Share2,
+  MousePointerClick
 } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
+import { ClientReferralDashboard } from "./ClientReferralDashboard";
 
 interface ClientPortalProps {
   isOpen?: boolean;
@@ -39,11 +44,20 @@ interface ClientPortalProps {
 }
 
 export const ClientPortal: React.FC<ClientPortalProps> = ({ isOpen = true, onClose, embedded = false }) => {
-  const { transactions, currentUser, userProfile, openAuthModal, logout } = useAgency();
+  const {
+    transactions,
+    currentUser,
+    userProfile,
+    openAuthModal,
+    logout,
+    referralStats,
+    userReferralCode,
+    simulateReferralClick,
+  } = useAgency();
   const [userRole, setUserRole] = useState<"client" | "admin">(
     userProfile?.role === "admin" ? "admin" : "client"
   );
-  const [activeTab, setActiveTab] = useState<"dashboard" | "invoices" | "deliverables" | "chat" | "crm">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "referrals" | "invoices" | "deliverables" | "chat" | "crm">("dashboard");
 
   // Keep userRole in sync if profile updates
   useEffect(() => {
@@ -192,6 +206,20 @@ export const ClientPortal: React.FC<ClientPortalProps> = ({ isOpen = true, onClo
                 }`}
               >
                 Campaign Analytics
+              </button>
+              <button
+                onClick={() => setActiveTab("referrals")}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center space-x-1.5 ${
+                  activeTab === "referrals" ? "gold-gradient-bg text-[#0B0B0B]" : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                <Gift className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span>Referral &amp; Earned Discounts</span>
+                <span className={`px-1.5 py-0.2 rounded-full text-[9px] font-bold font-mono ${
+                  activeTab === "referrals" ? "bg-black text-[#FFDF73]" : "bg-[#D4AF37]/20 text-[#FFDF73]"
+                }`}>
+                  {referralStats.totalClicks} Clicks
+                </span>
               </button>
               <button
                 onClick={() => setActiveTab("invoices")}
@@ -440,6 +468,47 @@ export const ClientPortal: React.FC<ClientPortalProps> = ({ isOpen = true, onClo
                 </div>
               </div>
 
+              {/* Quick Referral & Earned Discounts Snapshot Widget */}
+              <div className="glass-card-gold p-5 rounded-2xl border border-[#D4AF37]/40 bg-gradient-to-r from-[#1A1309] to-[#0E0A05] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center space-x-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-[#D4AF37]/20 border border-[#D4AF37]/50 flex items-center justify-center text-[#FFDF73] shrink-0 shadow-sm">
+                    <Gift className="w-5 h-5 text-[#FFDF73]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-bold text-white">Your Referral Tracking &amp; Earned Discounts</span>
+                      <span className="px-2 py-0.2 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 font-bold">
+                        {referralStats.totalClicks} Live Clicks
+                      </span>
+                    </div>
+                    <p className="text-xs text-neutral-300 mt-0.5">
+                      Referral Code: <span className="font-mono text-[#FFDF73] font-bold">{userReferralCode}</span> •{" "}
+                      <span className="text-emerald-400 font-medium">
+                        {referralStats.earnedDiscounts.filter(d => d.status === "Active").length} Active Discounts Ready
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 w-full md:w-auto">
+                  <button
+                    onClick={simulateReferralClick}
+                    className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                    title="Simulate a friend clicking your link (+1)"
+                  >
+                    <MousePointerClick className="w-3.5 h-3.5 text-[#FFDF73]" />
+                    <span>+1 Click Test</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("referrals")}
+                    className="flex-1 md:flex-initial px-4 py-2 rounded-xl gold-gradient-bg text-black font-bold text-xs flex items-center justify-center space-x-1 hover:scale-105 transition-transform shadow-md"
+                  >
+                    <span>Open Referral Dashboard</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
               {/* Task Milestones Table */}
               <div className="glass-card p-5 rounded-2xl border border-white/10 space-y-4">
                 <h4 className="text-xs font-bold text-white uppercase tracking-wider">
@@ -466,6 +535,14 @@ export const ClientPortal: React.FC<ClientPortalProps> = ({ isOpen = true, onClo
               </div>
 
             </div>
+          )}
+
+          {/* REFERRAL LINK TRACKING & EARNED DISCOUNTS VIEW */}
+          {userRole === "client" && activeTab === "referrals" && (
+            <ClientReferralDashboard
+              onNavigateToInvoices={() => setActiveTab("invoices")}
+              onNavigateToChat={() => setActiveTab("chat")}
+            />
           )}
 
           {/* INVOICES & PAYMENTS */}

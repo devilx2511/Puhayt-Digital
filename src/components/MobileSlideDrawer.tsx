@@ -111,14 +111,6 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
       onClick: () => onNavigate("portfolio"),
     },
     {
-      id: "case-studies",
-      title: "CASE STUDIES & METRICS",
-      badge: "ROI Proof",
-      badgeClass: "bg-[#1B2A1B] text-emerald-300 border border-emerald-500/40",
-      icon: Star,
-      onClick: () => onNavigate("case-studies"),
-    },
-    {
       id: "industries",
       title: "INDUSTRIES WE SERVE",
       badge: "Sectors",
@@ -135,12 +127,12 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
       onClick: () => onNavigate("ai-suite"),
     },
     {
-      id: "pricing",
-      title: "TRANSPARENT PRICING & ROI",
-      badge: "Packages",
-      badgeClass: "bg-[#1E293B] text-sky-300 border border-sky-500/30",
-      icon: CreditCard,
-      onClick: () => onNavigate("pricing"),
+      id: "referrals",
+      title: "REFERRALS & SPECIAL OFFERS",
+      badge: "Discounts",
+      badgeClass: "bg-gradient-to-r from-[#3A2508] to-[#1C1204] text-[#FFDF73] border border-[#D4AF37]/50 font-bold",
+      icon: Sparkles,
+      onClick: () => onNavigate("referrals"),
     },
     {
       id: "testimonials",
@@ -159,57 +151,36 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
       onClick: () => onNavigate("blog"),
     },
     {
+      id: "off-page-seo",
+      title: "OFF-PAGE SEO & CITATIONS",
+      badge: "Authority",
+      badgeClass: "bg-[#1A2E1A] text-emerald-300 border border-emerald-500/30",
+      icon: FileText,
+      onClick: () => onNavigate("off-page-seo"),
+    },
+    {
       id: "kolkata-geo",
-      title: "KOLKATA HQ & SERVICES",
-      badge: "Sector V",
+      title: "KOLKATA BASE & SERVICES",
+      badge: "Local",
       badgeClass: "bg-[#2A1E0E] text-[#FFDF73] border border-[#D4AF37]/40 font-bold",
       icon: MapPin,
       onClick: () => onNavigate("kolkata-geo"),
     },
     {
       id: "contact",
-      title: "CONTACT & CALENDLY DESK",
+      title: "CONTACT & DIRECT DESK",
       badge: "Direct",
       badgeClass: "bg-[#0E2818] text-emerald-300 border border-emerald-500/40",
       icon: Phone,
       onClick: () => onNavigate("contact"),
     },
     {
-      id: "client-portal",
-      title: "CLIENT PORTAL & WEBSITES",
-      badge: currentUser ? "Private Dashboard" : "Sign In",
-      badgeClass: "bg-[#2E1E09] text-[#FFDF73] border border-[#D4AF37]/50 font-bold",
-      icon: Crown,
-      onClick: () => {
-        onNavigate("client-portal");
-        openClientDashboard();
-      },
-    },
-    {
       id: "audit",
       title: "FREE INSTANT SEO AUDIT",
-      badge: "Live Score",
+      badge: "Real Score",
       badgeClass: "bg-gradient-to-r from-[#FFDF73] to-[#D4AF37] text-black font-bold",
       icon: Sparkles,
       onClick: () => onOpenAudit(),
-    },
-    {
-      id: "stitch-options",
-      title: "GOOGLE STITCH SUITE & SITEMAP",
-      badge: "Options Hub",
-      badgeClass: "bg-[#251D10] text-[#FFDF73] border border-[#D4AF37]/50 font-bold",
-      icon: SlidersHorizontal,
-      onClick: () => {
-        if (onOpenOptions) onOpenOptions();
-      },
-    },
-    {
-      id: "devmode",
-      title: "DEVMODE MASTER CONSOLE",
-      badge: isDevModeAuthenticated ? "Active" : "Protected",
-      badgeClass: "bg-[#451414] text-[#FFDF73] border border-[#D4AF37]/50",
-      icon: Lock,
-      onClick: () => openDevMode(),
     },
   ];
 
@@ -283,14 +254,24 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
             </div>
 
             {/* Drawer Body: Clean, elegant, spacious luxury menu items */}
-            <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-6 space-y-1">
+            <nav aria-label="Mobile Navigation Menu" className="flex-1 overflow-y-auto px-5 sm:px-8 py-6 space-y-1">
               {navMenuItems.map((item) => {
-                const Icon = item.icon;
                 const isActive = currentSection === item.id;
+                const hrefPath =
+                  item.id === "home"
+                    ? "/"
+                    : item.id === "audit"
+                      ? "/ai-suite"
+                      : `/${item.id}`;
                 return (
-                  <button
+                  <a
                     key={item.id}
-                    onClick={() => handleItemClick(item.onClick)}
+                    href={hrefPath}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleItemClick(item.onClick);
+                    }}
                     className={`w-full py-3.5 px-3 rounded-xl flex items-center text-left transition-all group border-b border-white/[0.04] ${
                       isActive
                         ? "text-[#FFDF73] font-bold bg-[#18120A]/70 border-[#D4AF37]/30"
@@ -305,22 +286,12 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
                         {item.title}
                       </span>
                     </div>
-                  </button>
+                  </a>
                 );
               })}
 
-              {/* DevMode & Sign In Quick Utility Links (like in Shikor Restro video) */}
+              {/* Sign In / Out Quick Utility Links */}
               <div className="pt-4 border-t border-white/10 space-y-1.5">
-                <button
-                  onClick={() => handleItemClick(openDevMode)}
-                  className="w-full py-2.5 px-3 rounded-xl flex items-center text-left text-neutral-400 hover:text-[#FFDF73] hover:bg-white/5 transition-all text-xs font-mono"
-                >
-                  <span className="flex items-center space-x-2">
-                    <Lock className="w-3.5 h-3.5 text-[#D4AF37]" />
-                    <span>⚙ OPEN DEVMODE ADMIN</span>
-                  </span>
-                </button>
-
                 {currentUser ? (
                   <button
                     onClick={async () => {
@@ -346,7 +317,7 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
                   </button>
                 )}
               </div>
-            </div>
+            </nav>
 
             {/* Bottom Fixed Full-Width CTA (Exact Shikor Restro Style from Video) */}
             <div className="p-4 sm:p-5 border-t border-[#D4AF37]/30 bg-[#0E0C09] shrink-0">

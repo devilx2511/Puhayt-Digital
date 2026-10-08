@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { PortfolioProject } from "../../types";
 import { useAgency } from "../../context/AgencyContext";
 import {
+  PortfolioWebsiteViewerModal,
+  getDisplayDomainForProject,
+  isExternalWebsiteUrl,
+} from "../PortfolioWebsiteViewerModal";
+import {
   Plus,
   Trash2,
   Edit3,
@@ -38,6 +43,7 @@ export const PortfolioManager: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [saveSuccessNotice, setSaveSuccessNotice] = useState<string | null>(null);
+  const [previewingWebsite, setPreviewingWebsite] = useState<PortfolioProject | null>(null);
 
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to delete ALL portfolio projects? This will completely empty the portfolio showcase on the website.")) {
@@ -1207,6 +1213,27 @@ export const PortfolioManager: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
+                  onClick={() => setPreviewingWebsite(project)}
+                  className="px-3 py-1.5 rounded-lg gold-gradient-bg text-[#0B0B0B] font-bold text-xs flex items-center space-x-1 shadow hover:scale-105 transition-transform"
+                  title={`Open ${getDisplayDomainForProject(project)}`}
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Open Website</span>
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+                {isExternalWebsiteUrl(project.liveUrl) && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[#FFDF73]"
+                    title="Open Direct External URL in New Tab"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                <button
+                  type="button"
                   onClick={() => startEdit(project)}
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[#D4AF37] font-bold text-xs flex items-center space-x-1"
                 >
@@ -1226,6 +1253,11 @@ export const PortfolioManager: React.FC = () => {
           </div>
         ))}
       </div>
+
+      <PortfolioWebsiteViewerModal
+        project={previewingWebsite}
+        onClose={() => setPreviewingWebsite(null)}
+      />
     </div>
   );
 };

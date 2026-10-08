@@ -16,6 +16,16 @@ export const FreeAuditModal: React.FC<FreeAuditModalProps> = ({ isOpen, onClose 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +36,23 @@ export const FreeAuditModal: React.FC<FreeAuditModalProps> = ({ isOpen, onClose 
 
     try {
       // Execute Google reCAPTCHA Enterprise verification
-      await executeRecaptcha("audit_submit");
+      const recaptchaToken = await executeRecaptcha("audit_submit");
+
+      fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Free Website Audit Lead",
+          email,
+          phone: "N/A",
+          company: url,
+          service: "Free Technical Website & SEO Audit",
+          budget: "Free Audit",
+          message: `Requested automated SEO & Web Vitals Audit report for website URL: ${url}`,
+          token: recaptchaToken,
+          recaptchaAction: "audit_submit",
+        }),
+      }).catch(() => {});
 
       // Register lead in agency context (triggers live toast notification for agency)
       addLead({

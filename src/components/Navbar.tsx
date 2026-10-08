@@ -70,10 +70,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: "about", label: "About", hideOnLg: false },
     { id: "services", label: "Services", hideOnLg: false },
     { id: "portfolio", label: "Portfolio", hideOnLg: false },
-    { id: "case-studies", label: "Case Studies", hideOnLg: true },
+    { id: "referrals", label: "Discounts & Referrals", hideOnLg: false },
+    { id: "testimonials", label: "Reviews", hideOnLg: false },
     { id: "industries", label: "Industries", hideOnLg: true },
-    { id: "pricing", label: "Pricing", hideOnLg: false },
-    { id: "testimonials", label: "Reviews", hideOnLg: true },
     { id: "blog", label: "Blog", hideOnLg: true },
     { id: "kolkata-geo", label: "Kolkata HQ", hideOnLg: true },
     { id: "ai-suite", label: "AI Suite", hideOnLg: true },
@@ -109,10 +108,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Center Navigation Links for Laptop / Desktop */}
           <nav aria-label="Desktop Main Navigation" className="hidden lg:flex items-center space-x-1 bg-[#120F0C]/80 px-3 py-1 rounded-full border border-[#D4AF37]/30 shadow-inner">
             {navLinks.filter(l => !l.hideOnLg).map((link) => (
-              <button
+              <a
                 key={link.id}
                 id={`desktop-nav-${link.id}`}
-                onClick={() => handleLinkClick(link.id)}
+                href={link.id === "home" ? "/" : `/${link.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(link.id);
+                }}
+                aria-current={currentSection === link.id ? "page" : undefined}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
                   currentSection === link.id
                     ? "text-[#0B0B0B] bg-gradient-to-r from-[#FFDF73] to-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.5)] font-bold"
@@ -120,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 {link.label}
-              </button>
+              </a>
             ))}
           </nav>
 

@@ -117,12 +117,12 @@ export const MobileBottomDock: React.FC<MobileBottomDockProps> = ({
           <span className="text-[10px] font-semibold tracking-tight mt-0.5">Portfolio</span>
         </button>
 
-        {/* 5. Google Stitch Three-Dot Options & Sitemap Trigger */}
+        {/* 5. Three-Dot Options & Sitemap Trigger */}
         <button
           id="dock-nav-options-dots"
           onClick={onOpenOptions || onOpenDrawer}
           className="flex-1 py-1.5 flex flex-col items-center justify-center transition-all text-neutral-400 hover:text-[#FFDF73] group"
-          title="Google Stitch Quick Options & Visual Sitemap"
+          title="Quick Options & Visual Sitemap"
         >
           <div className="w-9 h-9 rounded-2xl flex items-center justify-center group-hover:bg-[#FFDF73]/10 border border-transparent group-hover:border-[#D4AF37]/40 transition-all">
             <MoreVertical className="w-4 h-4 text-[#FFDF73]" />

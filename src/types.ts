@@ -260,7 +260,7 @@ export interface BlogPost {
     role: string;
     avatar: string;
   };
-  category: "SEO" | "AI Marketing" | "Web Design" | "PPC & Ads" | "Growth";
+  category: string;
   publishedAt: string;
   readTime: string;
   image: string;
@@ -408,5 +408,116 @@ export interface ClientInvoice {
   pdfUrl?: string;
   items?: { description: string; amount: number }[];
 }
+
+export interface TeamMemberProfile {
+  id: string;
+  name: string;
+  age: number;
+  roleTitle: string;
+  skills: string[];
+  phone: string;
+  whatsapp: string;
+  callingHours: string;
+  instagramUsername: string;
+  instagramUrl: string;
+  imageUrl?: string;
+  bio?: string;
+  accentBadge?: string;
+}
+
+export interface DiscountOfferImage {
+  id: string;
+  url: string;
+  caption: string;
+}
+
+export type OfferType = "Referral" | "Discount" | "Offer";
+
+export interface DiscountOffer {
+  id: string;
+  title: string;
+  badge: string;
+  offerType?: OfferType;
+  discountPercentage?: string;
+  discountAmount?: string;
+  code: string;
+  description: string;
+  images: DiscountOfferImage[];
+  validUntil?: string;
+  terms?: string;
+  active: boolean;
+  whatsappReferralMessageTemplate?: string;
+  createdAt: string;
+}
+
+export type EarnedDiscountStatus = "Active" | "Pending" | "Redeemed" | "Locked";
+
+export interface ReferralClickRecord {
+  id: string;
+  referralCode: string;
+  timestamp: string;
+  source: "WhatsApp" | "Direct Link" | "LinkedIn" | "Twitter / X" | "Instagram" | "QR Code" | "Email";
+  device: "Mobile" | "Desktop" | "Tablet";
+  location: string;
+  ipMasked?: string;
+  status: "Visited" | "Inquiry Submitted" | "Project Kickoff";
+}
+
+export interface EarnedDiscount {
+  id: string;
+  title: string;
+  code: string;
+  discountValue: string;
+  tierName: string;
+  description: string;
+  requiredClicks: number;
+  status: EarnedDiscountStatus;
+  unlockedAt?: string;
+  redeemedAt?: string;
+  appliedInvoiceRef?: string;
+  claimInstruction: string;
+}
+
+export interface UserReferralStats {
+  referralCode: string;
+  totalClicks: number;
+  uniqueVisitors: number;
+  inquiriesGenerated: number;
+  totalSavingsEarned: string;
+  clickHistory: ReferralClickRecord[];
+  earnedDiscounts: EarnedDiscount[];
+  lastUpdated: string;
+}
+
+export interface PublicReview {
+  id: string;
+  reviewerName: string;
+  reviewerRole?: string;
+  companyName?: string;
+  reviewerEmail?: string;
+  avatarUrl?: string;
+  rating: number; // 1 to 5
+  platformStyle: "Google Maps" | "Google Play Store" | "Verified Client";
+  serviceUsed: string;
+  title?: string;
+  comment: string;
+  photos?: string[];
+  subRatings?: {
+    quality: number;
+    communication: number;
+    value: number;
+    speed: number;
+  };
+  helpfulCount: number;
+  helpfulVoterIds?: string[];
+  ownerReply?: {
+    text: string;
+    repliedBy: string;
+    repliedAt: string;
+  };
+  isLocalGuide?: boolean;
+  createdAt: string;
+}
+
 
 
