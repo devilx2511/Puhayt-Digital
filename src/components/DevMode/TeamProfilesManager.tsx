@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAgency } from "../../context/AgencyContext";
 import { TeamMemberProfile } from "../../types";
+import { compressImageFile } from "../../utils/imageCompression";
 import { 
   Users, 
   Upload, 
@@ -33,15 +34,22 @@ export const TeamProfilesManager: React.FC = () => {
     );
   };
 
-  const handleImageUpload = (id: string, file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
-        handleChange(id, "imageUrl", dataUrl);
+  const handleImageUpload = async (id: string, file: File) => {
+    try {
+      const compressed = await compressImageFile(file, 900, 900, 0.85);
+      if (compressed) {
+        handleChange(id, "imageUrl", compressed);
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) {
+          handleChange(id, "imageUrl", dataUrl);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSave = async (member: TeamMemberProfile) => {

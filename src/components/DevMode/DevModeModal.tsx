@@ -10,6 +10,7 @@ import {
   validateAadhaarNumber,
   validateUpiVpa,
 } from "../../utils/paymentValidation";
+import { getDevModeRateLimitState } from "../../utils/security";
 import { PricingPlan, PortfolioProject } from "../../types";
 import { TeamProfilesManager } from "./TeamProfilesManager";
 import { DiscountsOffersManager } from "./DiscountsOffersManager";
@@ -105,6 +106,8 @@ export const DevModeModal: React.FC = () => {
   // Password Input state
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+  const [cloudSyncBanner, setCloudSyncBanner] = useState<string | null>(null);
+  const rateLimitState = getDevModeRateLimitState();
 
   // DevMode Tabs
   const [activeTab, setActiveTab] = useState<
@@ -200,12 +203,25 @@ export const DevModeModal: React.FC = () => {
   // Handle Password Submit
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (getDevModeRateLimitState().isLocked) {
+      setPasswordError(true);
+      return;
+    }
     const success = authenticateDevMode(passwordInput);
     if (success) {
       setPasswordError(false);
       setPasswordInput("");
+      syncAllToLiveCloud().catch(() => {});
     } else {
       setPasswordError(true);
+    }
+  };
+
+  const handleGlobalCloudSync = async () => {
+    const ok = await syncAllToLiveCloud();
+    if (ok) {
+      setCloudSyncBanner("All DevMode changes (Portfolio, Referrals, Discounts, Team, Pricing, Logo & Contacts) are now saved and live for all users on Vercel!");
+      setTimeout(() => setCloudSyncBanner(null), 5000);
     }
   };
 
@@ -706,13 +722,13 @@ export const DevModeModal: React.FC = () => {
               <>
                 <button
                   type="button"
-                  onClick={() => syncAllToLiveCloud()}
+                  onClick={handleGlobalCloudSync}
                   disabled={isCloudSyncing}
-                  className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-[#D4AF37] border border-[#D4AF37]/30 transition-all flex items-center space-x-1.5 disabled:opacity-50"
-                  title="Push all changes immediately to Firestore live database for all users"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-extrabold gold-gradient-bg text-[#0B0B0B] shadow-lg hover:scale-105 transition-all flex items-center space-x-1.5 disabled:opacity-50"
+                  title="Publish & Sync all DevMode changes immediately to live website for all Vercel users"
                 >
                   <Sparkles className={`w-3.5 h-3.5 ${isCloudSyncing ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">{isCloudSyncing ? "Broadcasting..." : "Sync Live Cloud"}</span>
+                  <span>{isCloudSyncing ? "Publishing Live..." : "Publish & Sync to Vercel Live"}</span>
                 </button>
 
                 <button
@@ -734,6 +750,18 @@ export const DevModeModal: React.FC = () => {
           </div>
         </div>
 
+        {cloudSyncBanner && (
+          <div className="mt-3 p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center justify-between shrink-0">
+            <div className="flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>{cloudSyncBanner}</span>
+            </div>
+            <button onClick={() => setCloudSyncBanner(null)} className="text-emerald-300 hover:text-white ml-2">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* AUTHENTICATION PROMPT */}
         {!isDevModeAuthenticated ? (
           <div className="py-12 sm:py-16 px-4 text-center max-w-md mx-auto space-y-6 my-auto">
@@ -752,26 +780,37 @@ export const DevModeModal: React.FC = () => {
               <div>
                 <input
                   type="password"
-                  placeholder="Enter DevMode Master Password"
+                  disabled={rateLimitState.isLocked}
+                  placeholder={rateLimitState.isLocked ? "Console Temporarily Locked" : "Enter DevMode Master Password"}
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
-                  className={`w-full px-4 py-3 rounded-xl bg-white/5 border text-center text-white text-sm font-mono focus:outline-none transition-all ${
-                    passwordError ? "border-red-500 ring-2 ring-red-500/30" : "border-white/15 focus:border-[#D4AF37]"
+                  className={`w-full px-4 py-3 rounded-xl bg-white/5 border text-center text-white text-sm font-mono focus:outline-none transition-all disabled:opacity-50 ${
+                    passwordError || rateLimitState.isLocked ? "border-red-500 ring-2 ring-red-500/30" : "border-white/15 focus:border-[#D4AF37]"
                   }`}
                 />
-                {passwordError && (
+                {rateLimitState.isLocked ? (
                   <p className="text-xs text-red-400 mt-2 font-medium flex items-center justify-center space-x-1">
                     <AlertCircle className="w-3.5 h-3.5 inline mr-1" />
-                    <span>Incorrect Password. Access Denied.</span>
+                    <span>Brute-Force Protection Active: Locked for {rateLimitState.remainingSeconds}s</span>
                   </p>
+                ) : (
+                  passwordError && (
+                    <p className="text-xs text-red-400 mt-2 font-medium flex items-center justify-center space-x-1">
+                      <AlertCircle className="w-3.5 h-3.5 inline mr-1" />
+                      <span>
+                        Incorrect Password. Access Denied ({Math.max(0, 5 - rateLimitState.failedAttempts)} attempts remaining).
+                      </span>
+                    </p>
+                  )
                 )}
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-full font-bold text-xs text-[#0B0B0B] gold-gradient-bg shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+                disabled={rateLimitState.isLocked}
+                className="w-full py-3.5 rounded-full font-bold text-xs text-[#0B0B0B] gold-gradient-bg shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
               >
-                Unlock DevMode Console
+                {rateLimitState.isLocked ? "Security Lockout Active" : "Unlock DevMode Console"}
               </button>
             </form>
           </div>

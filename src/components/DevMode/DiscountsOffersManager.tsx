@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAgency } from "../../context/AgencyContext";
 import { DiscountOffer, DiscountOfferImage, OfferType } from "../../types";
+import { compressImageFile } from "../../utils/imageCompression";
 import { 
   Gift, 
   Plus, 
@@ -24,10 +25,11 @@ import {
 } from "lucide-react";
 
 export const DiscountsOffersManager: React.FC = () => {
-  const { discounts, addDiscount, updateDiscount, deleteDiscount } = useAgency();
+  const { discounts, addDiscount, updateDiscount, deleteDiscount, syncAllToLiveCloud, isCloudSyncing } = useAgency();
 
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   // Filter State
   const [filterType, setFilterType] = useState<"ALL" | OfferType>("ALL");
@@ -100,21 +102,34 @@ export const DiscountsOffersManager: React.FC = () => {
     setNewImageCaption("");
   };
 
-  const handleFileUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
+  const handleFileUpload = async (file: File) => {
+    try {
+      const compressedDataUrl = await compressImageFile(file, 1600, 1600, 0.84);
+      if (compressedDataUrl) {
         const newImg: DiscountOfferImage = {
           id: "img-" + Date.now(),
-          url: dataUrl,
+          url: compressedDataUrl,
           caption: newImageCaption.trim() || file.name,
         };
         setImages((prev) => [...prev, newImg]);
         setNewImageCaption("");
       }
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) {
+          const newImg: DiscountOfferImage = {
+            id: "img-" + Date.now(),
+            url: dataUrl,
+            caption: newImageCaption.trim() || file.name,
+          };
+          setImages((prev) => [...prev, newImg]);
+          setNewImageCaption("");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleRemoveImage = (imgId: string) => {
@@ -144,6 +159,7 @@ export const DiscountsOffersManager: React.FC = () => {
         active,
         images,
       });
+      setSaveNotice(`"${title}" updated & synced live to Cloud Firestore for all users!`);
     } else {
       await addDiscount({
         title,
@@ -158,8 +174,10 @@ export const DiscountsOffersManager: React.FC = () => {
         active,
         images,
       });
+      setSaveNotice(`New ${offerType} "${title}" published & synced live to all Vercel users!`);
     }
 
+    setTimeout(() => setSaveNotice(null), 4000);
     resetForm();
   };
 
@@ -192,18 +210,37 @@ export const DiscountsOffersManager: React.FC = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            resetForm();
-            setIsAddingNew(true);
-          }}
-          className="px-4 py-2.5 rounded-xl gold-gradient-bg text-black font-extrabold text-xs uppercase tracking-wider flex items-center space-x-2 shadow-lg hover:scale-105 active:scale-95 transition-all self-start sm:self-auto shrink-0"
-        >
-          <Plus className="w-4 h-4 text-black" />
-          <span>Add New Package</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => syncAllToLiveCloud()}
+            disabled={isCloudSyncing}
+            className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#FFDF73] border border-[#D4AF37]/30 font-bold text-xs flex items-center space-x-1.5 transition-all disabled:opacity-50"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${isCloudSyncing ? "animate-spin" : ""}`} />
+            <span>{isCloudSyncing ? "Syncing..." : "Sync to Vercel Live"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              resetForm();
+              setIsAddingNew(true);
+            }}
+            className="px-4 py-2.5 rounded-xl gold-gradient-bg text-black font-extrabold text-xs uppercase tracking-wider flex items-center space-x-2 shadow-lg hover:scale-105 active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4 text-black" />
+            <span>Add New Package</span>
+          </button>
+        </div>
       </div>
+
+      {saveNotice && (
+        <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center space-x-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{saveNotice}</span>
+        </div>
+      )}
 
       {/* Filter Tabs by Type */}
       <div className="flex items-center space-x-2 overflow-x-auto pb-1">

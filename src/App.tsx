@@ -5,7 +5,6 @@ import { PublicAdBanner } from "./components/PublicAdBanner";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
-import { GeoPillarHubSection } from "./components/GeoPillarHubSection";
 import { TestimonialsSection } from "./components/TestimonialsSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
@@ -242,13 +241,10 @@ function MainAppContent({ initialPage }: { initialPage?: string }) {
             {/* 2. About Section */}
             <AboutSection />
 
-            {/* 3. Comprehensive 6-Pillar SEO & GEO Topical Authority Hub */}
-            <GeoPillarHubSection onNavigate={navigateToPage} />
-
-            {/* 4. Real Public Client Reviews (Google Maps & Play Store Style) */}
+            {/* 3. Real Public Client Reviews (Google Maps & Play Store Style) */}
             <TestimonialsSection />
 
-            {/* 5. Direct Contact Desk */}
+            {/* 4. Direct Contact Desk */}
             <ContactSection initialService={selectedServiceForContact} />
           </div>
         )}
@@ -411,7 +407,7 @@ function MainAppContent({ initialPage }: { initialPage?: string }) {
                 onOpenAudit={() => setIsAuditOpen(true)}
                 onNavigate={navigateToPage}
               >
-                <BlogSection />
+                <BlogSection onNavigate={navigateToPage} />
               </DedicatedPageLayout>
             )}
 

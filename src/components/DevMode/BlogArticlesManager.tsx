@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAgency } from "../../context/AgencyContext";
 import { BlogPost } from "../../types";
+import { compressImageFile } from "../../utils/imageCompression";
 import {
   BookOpen,
   Plus,
@@ -97,26 +98,32 @@ export const BlogArticlesManager: React.FC = () => {
     setIsAddingNew(true);
   };
 
-  const handleCoverFileUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
-        setImage(dataUrl);
-      }
-    };
-    reader.readAsDataURL(file);
+  const handleCoverFileUpload = async (file: File) => {
+    try {
+      const compressed = await compressImageFile(file, 1400, 1400, 0.82);
+      if (compressed) setImage(compressed);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) setImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleAvatarFileUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      if (dataUrl) {
-        setAuthorAvatar(dataUrl);
-      }
-    };
-    reader.readAsDataURL(file);
+  const handleAvatarFileUpload = async (file: File) => {
+    try {
+      const compressed = await compressImageFile(file, 500, 500, 0.85);
+      if (compressed) setAuthorAvatar(compressed);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        if (dataUrl) setAuthorAvatar(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const applyAuthorPreset = (preset: "aayush" | "trishanjit" | "editorial") => {

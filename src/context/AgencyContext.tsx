@@ -23,6 +23,16 @@ import {
 import { PRICING_PLANS, PORTFOLIO_PROJECTS, DEFAULT_TEAM_MEMBERS, DEFAULT_DISCOUNTS, DEFAULT_USER_REFERRAL_STATS, BLOG_POSTS } from "../data/agencyData";
 import { ALL_INDIAN_BANKS, ALL_UPI_APPS } from "../data/indianBanksAndUpi";
 import { validateIndianMobile, validateUpiVpa } from "../utils/paymentValidation";
+import { compressDeepPayload } from "../utils/imageCompression";
+import {
+  verifyDevModePasswordSync,
+  getDevModeRateLimitState,
+  recordFailedDevModeAttempt,
+  clearDevModeAttempts,
+  createDevModeSession,
+  clearDevModeSession,
+  isValidDevModeSession,
+} from "../utils/security";
 import type { User } from "firebase/auth";
 
 function cleanFirestoreData<T>(obj: T): T {
@@ -51,6 +61,7 @@ let firebaseDepsPromise: Promise<{
   setDoc: any;
   deleteDoc: any;
   onSnapshot: any;
+  getDocs: any;
 }> | null = null;
 
 function getFirebaseDeps() {
@@ -67,6 +78,7 @@ function getFirebaseDeps() {
       setDoc: firestore.setDoc,
       deleteDoc: firestore.deleteDoc,
       onSnapshot: firestore.onSnapshot,
+      getDocs: firestore.getDocs,
     }));
   }
   return firebaseDepsPromise;
@@ -75,7 +87,8 @@ function getFirebaseDeps() {
 async function asyncSetDoc(colName: string, docId: string, data: any, options?: any) {
   try {
     const { db, doc, setDoc } = await getFirebaseDeps();
-    await setDoc(doc(db, colName, docId), cleanFirestoreData(data), options);
+    const compressedData = await compressDeepPayload(cleanFirestoreData(data));
+    await setDoc(doc(db, colName, docId), compressedData, options);
   } catch (err) {
     console.error(`Firestore write error (${colName}/${docId}):`, err);
   }
@@ -767,10 +780,10 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return saved ? JSON.parse(saved) : [];
   });
 
-  // DEV MODE STATE
+  // DEV MODE STATE (Hardened session validation with expiration)
   const [isDevModeOpen, setIsDevModeOpen] = useState(false);
   const [isDevModeAuthenticated, setIsDevModeAuthenticated] = useState(() => {
-    return safeGetLocalStorage("puhayt_devmode_authed") === "true";
+    return isValidDevModeSession();
   });
 
   // FIREBASE AUTH STATE
@@ -779,8 +792,8 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<"google" | "email" | "phone" | "guest">("google");
 
-  // Firestore & Auth Real-Time Listeners — Activated on first user interaction or modal open
-  const [firestoreReady, setFirestoreReady] = useState(false);
+  // Firestore & Auth Real-Time Listeners — Immediately active on mount so all Vercel visitors see DevMode changes instantly
+  const [firestoreReady, setFirestoreReady] = useState(true);
 
   // PAYMENT MODAL STATE
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -987,37 +1000,73 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Cloud Syncing indicator state
   const [isCloudSyncing, setIsCloudSyncing] = useState(false);
 
-  // Master Sync to Cloud
+  // Master Sync to Cloud — Broadcasts ALL DevMode state to Firestore so every visitor on Vercel sees identical live data
   const syncAllToLiveCloud = async (): Promise<boolean> => {
     setIsCloudSyncing(true);
     try {
-      // 1. Sync Portfolio Projects
+      const { db, collection, getDocs, deleteDoc, doc } = await getFirebaseDeps();
+
+      // 1. Sync Portfolio Projects (and clean up any deleted projects in cloud)
+      try {
+        const existingPortfolioSnap = await getDocs(collection(db, "portfolio_projects"));
+        const activePortfolioIds = new Set(portfolioProjects.map((p) => p.id));
+        for (const d of existingPortfolioSnap.docs) {
+          if (!activePortfolioIds.has(d.id)) {
+            await deleteDoc(doc(db, "portfolio_projects", d.id));
+          }
+        }
+      } catch {}
       for (const p of portfolioProjects) {
         await asyncSetDoc("portfolio_projects", p.id, p);
       }
 
-      // 2. Sync Pricing Plans
+      // 2. Sync Pricing Plans (and clean up any deleted plans in cloud)
+      try {
+        const existingPlansSnap = await getDocs(collection(db, "pricing_plans"));
+        const activePlanIds = new Set(pricingPlans.map((p) => p.id));
+        for (const d of existingPlansSnap.docs) {
+          if (!activePlanIds.has(d.id)) {
+            await deleteDoc(doc(db, "pricing_plans", d.id));
+          }
+        }
+      } catch {}
       for (const plan of pricingPlans) {
         await asyncSetDoc("pricing_plans", plan.id, plan);
       }
 
-      // 3. Sync Settings
+      // 3. Sync All Global Settings, Team Profiles, Discounts/Referrals, Blog Posts & Public Reviews
       await asyncSetDoc("settings", "contact_info", contactInfo);
       await asyncSetDoc("settings", "location_pin", locationPin);
       await asyncSetDoc("settings", "payment_settings", paymentSettings);
       await asyncSetDoc("settings", "brand_logo", brandLogo);
-      await asyncSetDoc("settings", "site_config", { showCaseStudies });
-      await asyncSetDoc("settings", "blog_posts", { list: blogPosts });
+      await asyncSetDoc("settings", "team_members", { list: teamMembers, updatedAt: new Date().toISOString() });
+      await asyncSetDoc("settings", "discounts", { list: discounts, updatedAt: new Date().toISOString() });
+      await asyncSetDoc("settings", "blog_posts", { list: blogPosts, updatedAt: new Date().toISOString() });
+      await asyncSetDoc("settings", "public_reviews", { list: publicReviews, updatedAt: new Date().toISOString() });
+      await asyncSetDoc("settings", "site_config", {
+        showCaseStudies,
+        portfolioCount: portfolioProjects.length,
+        pricingCount: pricingPlans.length,
+        lastSyncedAt: new Date().toISOString(),
+      });
 
       // 4. Sync Campaigns
       for (const c of campaigns) {
         await asyncSetDoc("campaigns", c.id, c);
       }
 
+      // 5. Sync Subscribed Client Websites & Projects
+      for (const cw of clientWebsites) {
+        await asyncSetDoc("client_websites", cw.id, cw);
+      }
+      for (const cp of clientProjects) {
+        await asyncSetDoc("client_projects", cp.id, cp);
+      }
+
       const syncNotif: NotificationRecord = {
         id: `notif-sync-${Date.now()}`,
         title: `☁️ Live Cloud Synced Successfully!`,
-        message: `All portfolio projects, pricing tiers, branding, and contact settings are live for all users in real-time.`,
+        message: `All DevMode changes (Portfolio, Referrals, Discounts, Team, Pricing, Logo & Contacts) are now live for all users on Vercel.`,
         type: "system",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         read: false,
@@ -1165,6 +1214,14 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                   const data = snapshot.data();
                   if (typeof data?.showCaseStudies === "boolean") {
                     setShowCaseStudiesState(data.showCaseStudies);
+                  }
+                  if (data?.portfolioCount === 0) {
+                    setPortfolioProjects([]);
+                    localStorage.setItem("puhayt_portfolio_projects", JSON.stringify([]));
+                  }
+                  if (data?.pricingCount === 0) {
+                    setPricingPlans([]);
+                    localStorage.setItem("puhayt_pricing_plans", JSON.stringify([]));
                   }
                 }
               },
@@ -1726,10 +1783,12 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
     setPricingPlans([]);
     localStorage.setItem("puhayt_pricing_plans", JSON.stringify([]));
+    asyncSetDoc("settings", "site_config", { pricingCount: 0, lastSyncedAt: new Date().toISOString() }, { merge: true });
   };
 
   const restoreDefaultPricingPlans = () => {
     updatePricingPlans(PRICING_PLANS);
+    asyncSetDoc("settings", "site_config", { pricingCount: PRICING_PLANS.length, lastSyncedAt: new Date().toISOString() }, { merge: true });
   };
 
   const updatePortfolioProjects = (projects: PortfolioProject[]) => {
@@ -1749,12 +1808,14 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     projects.forEach((project) => {
       asyncSetDoc("portfolio_projects", project.id, project);
     });
+    asyncSetDoc("settings", "site_config", { portfolioCount: projects.length, lastSyncedAt: new Date().toISOString() }, { merge: true });
   };
 
   const addPortfolioProject = (project: PortfolioProject) => {
     setPortfolioProjects((prev) => {
       const updated = [project, ...prev.filter((p) => p.id !== project.id)];
       localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(updated));
+      asyncSetDoc("settings", "site_config", { portfolioCount: updated.length, lastSyncedAt: new Date().toISOString() }, { merge: true });
       return updated;
     });
     // Persist immediately to Cloud Firestore
@@ -1776,6 +1837,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setPortfolioProjects((prev) => {
       const updated = prev.filter((p) => p.id !== id);
       localStorage.setItem("puhayt_portfolio_projects", JSON.stringify(updated));
+      asyncSetDoc("settings", "site_config", { portfolioCount: updated.length, lastSyncedAt: new Date().toISOString() }, { merge: true });
       return updated;
     });
     asyncDeleteDoc("portfolio_projects", id);
@@ -1787,6 +1849,7 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
     setPortfolioProjects([]);
     localStorage.setItem("puhayt_portfolio_projects", JSON.stringify([]));
+    asyncSetDoc("settings", "site_config", { portfolioCount: 0, lastSyncedAt: new Date().toISOString() }, { merge: true });
   };
 
   const restoreDefaultPortfolioProjects = () => {
@@ -2068,20 +2131,29 @@ export const AgencyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const closeDevMode = () => {
     setIsDevModeOpen(false);
+    if (isDevModeAuthenticated) {
+      syncAllToLiveCloud().catch(() => {});
+    }
   };
 
   const authenticateDevMode = (password: string): boolean => {
-    if (password === "Sanhati26052009") {
+    const rateState = getDevModeRateLimitState();
+    if (rateState.isLocked) {
+      return false;
+    }
+    if (verifyDevModePasswordSync(password)) {
+      clearDevModeAttempts();
+      createDevModeSession();
       setIsDevModeAuthenticated(true);
-      localStorage.setItem("puhayt_devmode_authed", "true");
       return true;
     }
+    recordFailedDevModeAttempt();
     return false;
   };
 
   const logoutDevMode = () => {
     setIsDevModeAuthenticated(false);
-    localStorage.removeItem("puhayt_devmode_authed");
+    clearDevModeSession();
   };
 
   const openPaymentModal = (plan?: PricingPlan, cycle: "monthly" | "yearly" = "monthly") => {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAgency } from "../context/AgencyContext";
 import { BlogPost } from "../types";
+import { GeoPillarHubSection } from "./GeoPillarHubSection";
 import {
   Sparkles,
   ArrowRight,
@@ -12,7 +13,11 @@ import {
   BookOpen,
 } from "lucide-react";
 
-export const BlogSection: React.FC = () => {
+interface BlogSectionProps {
+  onNavigate?: (pageId: string) => void;
+}
+
+export const BlogSection: React.FC<BlogSectionProps> = ({ onNavigate }) => {
   const { blogPosts, openDevMode } = useAgency();
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [activePost, setActivePost] = useState<BlogPost | null>(null);
@@ -178,6 +183,11 @@ export const BlogSection: React.FC = () => {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Transferred Search Intent & Generative Engine Optimization (GEO) Architecture Section */}
+      <div className="mt-16 sm:mt-24">
+        <GeoPillarHubSection onNavigate={onNavigate} />
       </div>
 
       {/* Full Article Reader Modal */}

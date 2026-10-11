@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { PortfolioProject } from "../../types";
 import { useAgency } from "../../context/AgencyContext";
+import { compressImageFile } from "../../utils/imageCompression";
+import { sanitizeExternalUrl } from "../../utils/security";
 import {
-  PortfolioWebsiteViewerModal,
   getDisplayDomainForProject,
-  isExternalWebsiteUrl,
 } from "../PortfolioWebsiteViewerModal";
 import {
   Plus,
@@ -43,7 +43,6 @@ export const PortfolioManager: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [saveSuccessNotice, setSaveSuccessNotice] = useState<string | null>(null);
-  const [previewingWebsite, setPreviewingWebsite] = useState<PortfolioProject | null>(null);
 
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to delete ALL portfolio projects? This will completely empty the portfolio showcase on the website.")) {
@@ -183,7 +182,7 @@ export const PortfolioManager: React.FC = () => {
       execution: formProject.execution || [],
       technologies: formProject.technologies && formProject.technologies.length > 0 ? formProject.technologies : parsedTags,
       tags: parsedTags,
-      liveUrl: formProject.liveUrl || "",
+      liveUrl: sanitizeExternalUrl(formProject.liveUrl) || formProject.liveUrl?.trim() || "",
       impactMetrics: formProject.impactMetrics || [
         { label: "Speed", value: "99/100 Score" },
         { label: "Conversions", value: "+250% Inquiries" },
@@ -238,32 +237,45 @@ export const PortfolioManager: React.FC = () => {
     }
   };
 
-  // Device File Upload helper for Images
-  const handleDeviceImageUpload = (
+  // Device File Upload helper for Images (Compressed for Cloud Firestore 1MB limit)
+  const handleDeviceImageUpload = async (
     field: "image" | "logoUrl" | "mockupDesktop" | "mockupMobile",
     file?: File
   ) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64 = uploadEvent.target?.result as string;
-      setFormProject((prev) => ({ ...prev, [field]: base64 }));
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImageFile(file, 1400, 1400, 0.82);
+      setFormProject((prev) => ({ ...prev, [field]: compressed }));
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const base64 = uploadEvent.target?.result as string;
+        setFormProject((prev) => ({ ...prev, [field]: base64 }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  // Device File Upload helper for Photos array
-  const handleDevicePhotoUpload = (file?: File) => {
+  // Device File Upload helper for Photos array (Compressed for Cloud Firestore 1MB limit)
+  const handleDevicePhotoUpload = async (file?: File) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64 = uploadEvent.target?.result as string;
+    try {
+      const compressed = await compressImageFile(file, 1400, 1400, 0.8);
       setFormProject((prev) => ({
         ...prev,
-        photos: [...(prev.photos || []), base64],
+        photos: [...(prev.photos || []), compressed],
       }));
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const base64 = uploadEvent.target?.result as string;
+        setFormProject((prev) => ({
+          ...prev,
+          photos: [...(prev.photos || []), base64],
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   // Device File Upload helper for Videos
@@ -447,10 +459,10 @@ export const PortfolioManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-[#FFDF73] mb-1">Live Website Link / WhatsApp URL</label>
+                <label className="block text-[11px] font-semibold text-[#FFDF73] mb-1">Live Website URL (Opens in New Tab) *</label>
                 <input
                   type="text"
-                  placeholder="https://example.com or WhatsApp link"
+                  placeholder="https://your-client-website.com"
                   value={formProject.liveUrl}
                   onChange={(e) => setFormProject({ ...formProject, liveUrl: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-black border border-[#D4AF37]/30 text-white text-xs focus:outline-none focus:border-[#D4AF37]"
@@ -1211,27 +1223,17 @@ export const PortfolioManager: React.FC = () => {
               </div>
 
               <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setPreviewingWebsite(project)}
+                <a
+                  href={sanitizeExternalUrl(project.liveUrl) || getDisplayDomainForProject(project)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-3 py-1.5 rounded-lg gold-gradient-bg text-[#0B0B0B] font-bold text-xs flex items-center space-x-1 shadow hover:scale-105 transition-transform"
-                  title={`Open ${getDisplayDomainForProject(project)}`}
+                  title={`Open ${sanitizeExternalUrl(project.liveUrl) || getDisplayDomainForProject(project)} in a new tab`}
                 >
                   <Globe className="w-3.5 h-3.5" />
-                  <span>Open Website</span>
+                  <span>Open in New Tab</span>
                   <ExternalLink className="w-3 h-3" />
-                </button>
-                {isExternalWebsiteUrl(project.liveUrl) && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[#FFDF73]"
-                    title="Open Direct External URL in New Tab"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
+                </a>
                 <button
                   type="button"
                   onClick={() => startEdit(project)}
@@ -1253,11 +1255,6 @@ export const PortfolioManager: React.FC = () => {
           </div>
         ))}
       </div>
-
-      <PortfolioWebsiteViewerModal
-        project={previewingWebsite}
-        onClose={() => setPreviewingWebsite(null)}
-      />
     </div>
   );
 };

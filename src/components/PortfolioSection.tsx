@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useAgency } from "../context/AgencyContext";
 import { PortfolioProject } from "../types";
+import { sanitizeExternalUrl } from "../utils/security";
 import {
-  PortfolioWebsiteViewerModal,
   getDisplayDomainForProject,
-  isExternalWebsiteUrl,
 } from "./PortfolioWebsiteViewerModal";
 import {
   ExternalLink,
@@ -47,23 +46,9 @@ export const PortfolioSection: React.FC = () => {
   const [activeTag, setActiveTag] = useState<string>("All");
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
-  const [activeWebsiteProject, setActiveWebsiteProject] = useState<PortfolioProject | null>(null);
   const [modalTab, setModalTab] = useState<"case-study" | "media">("case-study");
   const [activeMediaSubTab, setActiveMediaSubTab] = useState<"desktop" | "mobile" | "photos" | "video">("desktop");
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
-
-  // Automatically open website viewer if ?openWebsite=<id> is in URL
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const openSiteId = params.get("openWebsite");
-    if (openSiteId && portfolioProjects.length > 0) {
-      const found = portfolioProjects.find((p) => p.id === openSiteId);
-      if (found) {
-        setActiveWebsiteProject(found);
-      }
-    }
-  }, [portfolioProjects]);
 
   // Pagination / "See More" State
   const INITIAL_VISIBLE_COUNT = 4;
@@ -71,6 +56,23 @@ export const PortfolioSection: React.FC = () => {
 
   const primaryWhatsapp = contactInfo?.whatsapps?.[0] || "+917044811476";
   const cleanWhatsapp = primaryWhatsapp.replace(/[^0-9]/g, "");
+
+  // Resolve the exact URL configured in DevMode to open in a new tab
+  const getProjectExternalUrl = (project: PortfolioProject): string => {
+    const sanitized = sanitizeExternalUrl(project.liveUrl);
+    if (sanitized) return sanitized;
+    return `https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(
+      `Hello Puhayt Digital! I saw ${project.title} in your portfolio and would like to see the live project.`
+    )}`;
+  };
+
+  const getCleanDisplayUrl = (project: PortfolioProject): string => {
+    const sanitized = sanitizeExternalUrl(project.liveUrl);
+    if (sanitized && !sanitized.includes("wa.me") && !sanitized.includes("api.whatsapp.com")) {
+      return sanitized.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    }
+    return getDisplayDomainForProject(project).replace(/^https?:\/\//, "");
+  };
 
   // Dynamic filter categories
   const filterTags = [
@@ -236,10 +238,13 @@ export const PortfolioSection: React.FC = () => {
                       transition={{ duration: 0.5, delay: (index % 4) * 0.08, ease: "easeOut" }}
                       className="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col justify-between group shadow-xl hover:shadow-2xl hover:shadow-[#D4AF37]/10"
                     >
-                      {/* Media Preview Frame */}
-                      <div
-                        onClick={() => setActiveWebsiteProject(project)}
-                        className="relative aspect-[16/10] overflow-hidden bg-black/60 cursor-pointer"
+                      {/* Media Preview Frame — Opens DevMode URL directly in a new tab */}
+                      <a
+                        href={getProjectExternalUrl(project)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative aspect-[16/10] overflow-hidden bg-black/60 cursor-pointer block"
+                        title={`Open ${project.title} in a new tab`}
                       >
                         <img
                           src={project.image || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"}
@@ -250,11 +255,11 @@ export const PortfolioSection: React.FC = () => {
 
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-85" />
 
-                        {/* Hover Overlay: Click to Open Live Website */}
+                        {/* Hover Overlay: Click to Open Live Website in New Tab */}
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
                           <span className="px-4 py-2.5 rounded-full gold-gradient-bg text-[#0B0B0B] font-bold text-xs flex items-center space-x-2 shadow-2xl transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                             <Globe className="w-4 h-4" />
-                            <span>Open Live Website</span>
+                            <span>Open Live Website in New Tab</span>
                             <ExternalLink className="w-3.5 h-3.5" />
                           </span>
                         </div>
@@ -283,26 +288,31 @@ export const PortfolioSection: React.FC = () => {
 
                         {/* Bottom Domain Bar inside Image */}
                         <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-                          <span className="px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-white/15 text-[11px] font-mono text-[#FFDF73] flex items-center space-x-1.5 truncate max-w-[75%]">
+                          <span className="px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-white/15 text-[11px] font-mono text-[#FFDF73] flex items-center space-x-1.5 truncate max-w-[72%]">
                             <Globe className="w-3 h-3 text-[#D4AF37] shrink-0" />
-                            <span className="truncate">{getDisplayDomainForProject(project).replace(/^https?:\/\//, "")}</span>
+                            <span className="truncate">{getCleanDisplayUrl(project)}</span>
                           </span>
-                          <span className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 backdrop-blur-md border border-[#D4AF37]/40 text-[10px] font-bold text-[#FFDF73] uppercase tracking-wider">
-                            Click to Open
+                          <span className="px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 backdrop-blur-md border border-[#D4AF37]/40 text-[10px] font-bold text-[#FFDF73] uppercase tracking-wider flex items-center space-x-1">
+                            <span>New Tab</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
                           </span>
                         </div>
-                      </div>
+                      </a>
 
                       {/* Card Content Body */}
                       <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                         
                         <div className="space-y-3">
                           <div className="flex items-center justify-between gap-2">
-                            <h3
-                              onClick={() => setActiveWebsiteProject(project)}
-                              className="font-serif text-2xl font-bold text-white group-hover:text-[#D4AF37] transition-colors cursor-pointer"
-                            >
-                              {project.title}
+                            <h3 className="font-serif text-2xl font-bold text-white group-hover:text-[#D4AF37] transition-colors">
+                              <a
+                                href={getProjectExternalUrl(project)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:underline inline-flex items-center gap-1.5"
+                              >
+                                <span>{project.title}</span>
+                              </a>
                             </h3>
                             {project.client && (
                               <span className="text-[11px] text-neutral-400 font-mono hidden sm:inline shrink-0">
@@ -389,15 +399,17 @@ export const PortfolioSection: React.FC = () => {
 
                           {/* Action Buttons Row */}
                           <div className="flex flex-wrap items-center gap-2 pt-2">
-                            <button
-                              onClick={() => setActiveWebsiteProject(project)}
+                            <a
+                              href={getProjectExternalUrl(project)}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="flex-1 min-w-[140px] py-2.5 px-3.5 rounded-xl font-bold text-xs text-[#0B0B0B] gold-gradient-bg flex items-center justify-center space-x-1.5 shadow-lg hover:scale-105 transition-transform"
-                              title="Open Interactive Live Website"
+                              title="Open Live Website in a New Browser Tab"
                             >
                               <Globe className="w-3.5 h-3.5" />
                               <span>Open Website</span>
                               <ExternalLink className="w-3 h-3" />
-                            </button>
+                            </a>
 
                             <button
                               onClick={() => openProjectModal(project, "case-study")}
@@ -418,11 +430,7 @@ export const PortfolioSection: React.FC = () => {
                             </button>
 
                             <a
-                              href={
-                                isExternalWebsiteUrl(project.liveUrl)
-                                  ? project.liveUrl
-                                  : `?openWebsite=${encodeURIComponent(project.id)}#/portfolio`
-                              }
+                              href={getProjectExternalUrl(project)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-2.5 rounded-xl bg-white/5 hover:bg-[#D4AF37]/20 text-[#FFDF73] border border-[#D4AF37]/30 transition-colors"
@@ -538,18 +546,16 @@ export const PortfolioSection: React.FC = () => {
                   </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    const proj = selectedProject;
-                    setSelectedProject(null);
-                    setActiveWebsiteProject(proj);
-                  }}
+                <a
+                  href={getProjectExternalUrl(selectedProject)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-4 py-2 rounded-xl text-xs font-bold bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#FFDF73] hover:text-black border border-[#D4AF37]/50 flex items-center space-x-1.5 transition-all"
                 >
                   <Globe className="w-4 h-4" />
-                  <span>Open Live Website</span>
+                  <span>Open Live Website in New Tab</span>
                   <ExternalLink className="w-3.5 h-3.5" />
-                </button>
+                </a>
               </div>
 
               {/* TAB 1: CASE STUDY & GROWTH GRAPHS */}
@@ -815,30 +821,16 @@ export const PortfolioSection: React.FC = () => {
 
               {/* Modal Footer CTA */}
               <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-white/10">
-                <button
-                  onClick={() => {
-                    const proj = selectedProject;
-                    setSelectedProject(null);
-                    setActiveWebsiteProject(proj);
-                  }}
+                <a
+                  href={getProjectExternalUrl(selectedProject)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex-1 py-3 px-4 rounded-xl font-bold text-xs text-[#0B0B0B] gold-gradient-bg flex items-center justify-center space-x-2 shadow-lg hover:scale-105 transition-transform"
                 >
                   <Globe className="w-4 h-4" />
-                  <span>Open Interactive Live Website</span>
+                  <span>Open Live Website in New Tab</span>
                   <ExternalLink className="w-4 h-4" />
-                </button>
-
-                {isExternalWebsiteUrl(selectedProject.liveUrl) && (
-                  <a
-                    href={selectedProject.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-3 px-4 rounded-xl font-bold text-xs text-[#FFDF73] bg-white/10 hover:bg-white/15 border border-[#D4AF37]/40 flex items-center justify-center space-x-2 transition-colors"
-                  >
-                    <span>Open Direct URL in New Tab</span>
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
+                </a>
 
                 <a
                   href={`https://wa.me/${cleanWhatsapp}?text=${encodeURIComponent(`Hello Puhayt Digital! I saw the case study for ${selectedProject.title} and want to discuss building a high-performance website for my business.`)}`}
@@ -854,14 +846,6 @@ export const PortfolioSection: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
-
-      {/* INTERACTIVE LIVE WEBSITE VIEWER MODAL */}
-      <PortfolioWebsiteViewerModal
-        project={activeWebsiteProject}
-        onClose={() => setActiveWebsiteProject(null)}
-        onOpenCaseStudy={(proj) => openProjectModal(proj, "case-study")}
-        whatsappNumber={cleanWhatsapp}
-      />
 
     </section>
   );
