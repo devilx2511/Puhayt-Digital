@@ -444,6 +444,44 @@ export const PAGE_SEO_MAP: Record<string, PageSEOConfig> = {
     ],
   },
 
+  pricing: {
+    pageId: "pricing",
+    title: "Transparent Pricing Plans & Investment Packages | Puhayt Digital",
+    description:
+      "Explore transparent pricing for Website Building, 3D Web Design, Technical SEO, and Paid Ads with monthly/yearly billing and direct WhatsApp onboarding.",
+    canonicalPath: "/pricing",
+    ogType: "website",
+    schemaPageType: "CollectionPage",
+    keywords: [
+      "website building pricing",
+      "seo services cost",
+      "digital marketing packages pricing",
+      "custom react website price india",
+      "puhayt digital pricing plans",
+    ],
+    topicClusterTitle: "Transparent Investment Plans, Monthly Retainers & Direct WhatsApp Onboarding",
+    topicClusterDescription:
+      "Flexible monthly or yearly billing with 20% savings, full deliverable breakdowns, online checkout, and direct WhatsApp order confirmation.",
+    searchIntentTags: [
+      "Transparent Monthly & Yearly Plans",
+      "Website Building & SEO Packages",
+      "Direct WhatsApp Onboarding",
+      "Instant Online Checkout & Invoices",
+    ],
+    faqs: [
+      {
+        question: "Can I customize the scope of a pricing plan?",
+        answer:
+          "Yes. While we offer standardized Starter, Business, and Enterprise packages, all deliverables can be customized to match your business scope and timeline.",
+      },
+      {
+        question: "Are there any hidden fees or hosting charges?",
+        answer:
+          "No. All pricing is 100% transparent with no hidden setup fees. Domain and cloud hosting fees are scoped transparently upfront with zero markup.",
+      },
+    ],
+  },
+
   industries: {
     pageId: "industries",
     title: "Industries We Serve: E-Commerce, Real Estate, Healthcare, SaaS & Hospitality",
@@ -719,7 +757,6 @@ export function getPageSEOConfig(pageId?: string): PageSEOConfig {
   const cleanId = pageId.replace(/^#?\/?/, "").toLowerCase() || "home";
   if (cleanId === "reviews") return PAGE_SEO_MAP.testimonials;
   if (cleanId === "case-studies") return PAGE_SEO_MAP.portfolio;
-  if (cleanId === "pricing") return PAGE_SEO_MAP.referrals;
   if (cleanId === "backlinks") return PAGE_SEO_MAP["off-page-seo"];
   return PAGE_SEO_MAP[cleanId] || PAGE_SEO_MAP["not-found"];
 }

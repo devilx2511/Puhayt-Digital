@@ -109,7 +109,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <li><a href="/about" onClick={(e) => { e.preventDefault(); onNavigate("about"); }} className="inline-block py-1 hover:text-white transition-colors">About Founders &amp; Mission</a></li>
               <li><a href="/services" onClick={(e) => { e.preventDefault(); onNavigate("services"); }} className="inline-block py-1 hover:text-white transition-colors">SEO, Web Design &amp; Hosting Services</a></li>
               <li><a href="/portfolio" onClick={(e) => { e.preventDefault(); onNavigate("portfolio"); }} className="inline-block py-1 hover:text-white transition-colors">Live Website Portfolio</a></li>
-              <li><a href="/referrals" onClick={(e) => { e.preventDefault(); onNavigate("referrals"); }} className="inline-block py-1 hover:text-white transition-colors">Pricing, Referrals &amp; Discounts</a></li>
+              <li><a href="/pricing" onClick={(e) => { e.preventDefault(); onNavigate("pricing"); }} className="inline-block py-1 hover:text-white transition-colors">Pricing &amp; Investment Plans</a></li>
+              <li><a href="/referrals" onClick={(e) => { e.preventDefault(); onNavigate("referrals"); }} className="inline-block py-1 hover:text-white transition-colors">Special Discounts &amp; Referrals</a></li>
               <li><a href="/industries" onClick={(e) => { e.preventDefault(); onNavigate("industries"); }} className="inline-block py-1 hover:text-white transition-colors">Industries We Scale</a></li>
             </ul>
           </div>

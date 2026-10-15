@@ -127,6 +127,14 @@ export const MobileSlideDrawer: React.FC<MobileSlideDrawerProps> = ({
       onClick: () => onNavigate("ai-suite"),
     },
     {
+      id: "pricing",
+      title: "TRANSPARENT PRICING PLANS",
+      badge: "Packages",
+      badgeClass: "bg-gradient-to-r from-[#3A2508] to-[#1C1204] text-[#FFDF73] border border-[#D4AF37]/50 font-bold",
+      icon: CreditCard,
+      onClick: () => onNavigate("pricing"),
+    },
+    {
       id: "referrals",
       title: "REFERRALS & SPECIAL OFFERS",
       badge: "Discounts",

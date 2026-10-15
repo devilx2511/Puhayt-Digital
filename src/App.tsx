@@ -17,6 +17,7 @@ import { AISuiteSection } from "./components/AISuiteSection";
 import { BlogSection } from "./components/BlogSection";
 import { KolkataGeoSection } from "./components/KolkataGeoSection";
 import { ReferralDiscountsSection } from "./components/ReferralDiscountsSection";
+import { PricingSection } from "./components/PricingSection";
 import { OffPageSeoSection } from "./components/OffPageSeoSection";
 
 // Code-Split Authenticated & Interactive Views (Downloaded only when opened)
@@ -75,7 +76,6 @@ function resolveInitialPage(initialPageProp?: string): string {
     if (!clean || clean === "home" || clean === "index.html") return "home";
     if (clean === "reviews") return "testimonials";
     if (clean === "case-studies") return "portfolio";
-    if (clean === "pricing") return "referrals";
     if (clean === "backlinks") return "off-page-seo";
     if (VALID_PUBLIC_AND_APP_PAGES.includes(clean)) return clean;
     return "not-found";
@@ -95,7 +95,6 @@ function resolveInitialPage(initialPageProp?: string): string {
     if (VALID_PUBLIC_AND_APP_PAGES.includes(target)) {
       if (target === "reviews") return "testimonials";
       if (target === "case-studies") return "portfolio";
-      if (target === "pricing") return "referrals";
       if (target === "backlinks") return "off-page-seo";
       return target;
     }
@@ -178,8 +177,6 @@ function MainAppContent({ initialPage }: { initialPage?: string }) {
         ? "testimonials"
         : target === "case-studies"
         ? "portfolio"
-        : target === "pricing"
-        ? "referrals"
         : target === "backlinks"
         ? "off-page-seo"
         : target;
@@ -363,19 +360,19 @@ function MainAppContent({ initialPage }: { initialPage?: string }) {
               </DedicatedPageLayout>
             )}
 
-            {/* REDIRECT PRICING TO REFERRALS & DISCOUNTS */}
+            {/* DEDICATED PRICING PAGE */}
             {currentPage === "pricing" && (
               <DedicatedPageLayout
-                pageId="referrals"
-                pageTitle="Special Discounts & Referral Rewards"
-                pageSubtitle="Active promotional packages for custom 3D web design and technical SEO, plus shareable referral rewards."
-                badgeText="Promotional Offers"
+                pageId="pricing"
+                pageTitle="Transparent Pricing & Investment Plans"
+                pageSubtitle="Choose your growth tier with flexible monthly or yearly billing, transparent deliverables, and direct WhatsApp onboarding."
+                badgeText="Transparent Investment"
                 onNavigateHome={() => navigateToPage("home")}
                 onNavigateToContact={() => navigateToPage("contact")}
                 onOpenAudit={() => setIsAuditOpen(true)}
                 onNavigate={navigateToPage}
               >
-                <ReferralDiscountsSection onNavigateToContact={() => navigateToPage("contact")} />
+                <PricingSection onSelectPlan={() => navigateToPage("contact")} />
               </DedicatedPageLayout>
             )}
 

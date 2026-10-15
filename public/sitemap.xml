@@ -81,10 +81,18 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Transparent Pricing Plans -->
+  <url>
+    <loc>https://puhaytdigital.ai.studio/pricing</loc>
+    <lastmod>2026-10-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
   <!-- Packages, Discounts & Referrals -->
   <url>
     <loc>https://puhaytdigital.ai.studio/referrals</loc>
-    <lastmod>2026-10-07</lastmod>
+    <lastmod>2026-10-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
